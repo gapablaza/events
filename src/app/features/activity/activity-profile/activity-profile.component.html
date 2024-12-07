@@ -1,0 +1,17 @@
+@if (activity) {
+    <h2>{{ activity.name }}</h2>
+    <p>{{ activity.description }}</p>
+
+    <app-attendance-by-code
+        (onCode)="checkByCode($event)"
+    ></app-attendance-by-code>
+
+    @if (attendance.length) {
+        <app-attendance-list
+            [attendance]="attendance"
+            (onCheck)="check($event)"
+        ></app-attendance-list>
+    }
+} @else {
+    <p>Cargando actividad</p>
+}

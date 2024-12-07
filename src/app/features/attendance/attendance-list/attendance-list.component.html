@@ -1,0 +1,42 @@
+<div class="attendance-lists" style="display: flex;">
+    <div class="attendance-list">
+        <h3>Inscritos</h3>
+        <ol>
+            @for (item of attendance(); track item.id) {
+                <li [ngClass]="item.attendance_time ? 'checked' : ''">
+                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    @if (!item.attendance_time) {
+                        <button (click)="check(item)">Presente</button>
+                    }
+                </li>
+            }
+        </ol>
+    </div>
+    <div class="attendance-list presents">
+        <h3>Presentes</h3>
+        <ol>
+            @for (item of checked(); track item.id) {
+                <li>
+                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    @if (!item.attendance_time) {
+                        <button (click)="check(item)">Presente</button>
+                    }
+                </li>
+            } @empty {
+                <li>No hay inscritos</li>}
+        </ol>
+    </div>
+    <div class="attendance-list">
+        <h3>Faltantes</h3>
+        <ol>
+            @for (item of unchecked(); track item.id) {
+                <li>
+                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    @if (!item.attendance_time) {
+                        <button (click)="check(item)">Presente</button>
+                    }
+                </li>
+            }
+        </ol>
+    </div>
+</div>

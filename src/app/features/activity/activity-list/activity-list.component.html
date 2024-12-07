@@ -1,0 +1,6 @@
+<p>Actividades</p>
+<ul>
+    @for (item of activities; track item.id) {
+        <li><a [href]="item.id">{{ item.name }}</a></li>
+    }
+</ul>

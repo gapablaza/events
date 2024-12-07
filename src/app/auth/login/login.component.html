@@ -1,0 +1,25 @@
+<section class="auth auth-section">
+  <div class="login card">
+    <h1>
+      Ingresar
+    </h1>
+    <p>
+      ¿No tienes una cuenta?
+      <a [routerLink]="['/signup']" class="color-accent">Regístrate</a>
+    </p>
+
+    <div class="login-form">
+      <form [formGroup]="loginForm" (ngSubmit)="loginForm.valid && onSubmit()">
+        <input type="email" formControlName="email" email required>
+        <input type="password" formControlName="password" required minlength="6">
+
+        <p>
+          <a [routerLink]="['/forgot-password']" class="color-accent">¿Olvidaste tu contraseña?</a>
+        </p>
+
+        <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
+      </form>
+
+    </div>
+  </div>
+</section>
