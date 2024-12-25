@@ -8,12 +8,11 @@ import {
 import { FormsModule } from '@angular/forms';
 
 @Component({
-  selector: 'app-attendance-by-code',
-  templateUrl: './attendance-by-code.component.html',
-  standalone: true,
-  imports: [
-    FormsModule
-  ],
+    selector: 'app-attendance-by-code',
+    templateUrl: './attendance-by-code.component.html',
+    imports: [
+        FormsModule
+    ]
 })
 export class AttendanceByCodeComponent {
   @Output() onCode = new EventEmitter<string>();

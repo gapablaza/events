@@ -1,0 +1,89 @@
+<section class="person person-section">
+    <div class="card">
+        @if (isLoaded()) {
+        <h1>
+            @let title = mode() == 'create' ? 'Crear' : 'Editar';
+            <span>{{ title }}</span> persona
+        </h1>
+
+        <div class="person-form">
+            <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
+
+                <p>
+                    <label for="">RUT</label>
+                    <input type="text" formControlName="rut">
+                </p>
+                <p>
+                    <label for="">Nombre</label>
+                    <input type="text" formControlName="name" required>
+                </p>
+                <p>
+                    <label for="">2do Nombre</label>
+                    <input type="text" formControlName="middle_name">
+                </p>
+                <p>
+                    <label for="">Apellido Paterno</label>
+                    <input type="text" formControlName="first_name" required>
+                </p>
+                <p>
+                    <label for="">Apellido Materno</label>
+                    <input type="text" formControlName="last_name">
+                </p>
+                <p>
+                    <label for="">Fecha de Nacimiento</label>
+                    <input type="date" formControlName="birthday">
+                </p>
+                <p>
+                    <label for="">Email</label>
+                    <input type="email" formControlName="email" email>
+                </p>
+                <p>
+                    <label for="">Teléfono</label>
+                    <input type="text" formControlName="phone">
+                </p>
+                <p>
+                    <label for="">Dirección</label>
+                    <input type="text" formControlName="address">
+                </p>
+                <p>
+                    <label for="">Sexo</label>
+                    <select formControlName="gender">
+                        <option value="">Seleccione un sexo</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                    </select>
+                </p>
+                <p>
+                    <label for="">Profesión u Oficio</label>
+                    <input type="text" formControlName="profession">
+                </p>
+                <p>
+                    <label for="">Patente Vehículo</label>
+                    <input type="text" formControlName="license_plate">
+                </p>
+                <p>
+                    <label for="">Localidad</label>
+                    <select formControlName="locality_id">
+                        <option value="">Seleccione localidad</option>
+                        <option *ngFor="let locality of localities()" [value]="locality.id">
+                            {{ locality.display_name }}
+                        </option>
+                    </select>
+                </p>
+                <p>
+                    <label for="">Observaciones</label>
+                    <input type="text" formControlName="observations">
+                </p>
+
+                <p>
+                    <a [routerLink]="['/person']" class="color-accent">volver</a>
+                </p>
+
+                <button type="submit" [disabled]="personForm.invalid">Guardar</button>
+            </form>
+        </div>
+        } @else {
+        <h1>Cargando...</h1>
+        }
+    </div>
+</section>

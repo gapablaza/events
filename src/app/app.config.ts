@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, isDevMode } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
 
 import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
@@ -14,7 +14,7 @@ import APP_ROUTES from './app.routes';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(APP_ROUTES),
+    provideRouter(APP_ROUTES, withComponentInputBinding()),
     provideFirebaseApp(() => initializeApp({
         projectId: 'events-77388',
         appId: '1:316890990808:web:34a48f2df1ec3e2b016fad',

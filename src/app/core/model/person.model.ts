@@ -9,7 +9,12 @@ export interface Person {
     email?: string;
     phone?: string;
     address?: string;
-    gender?: string;
+    gender?: 'M' | 'F';
+    profession?: string;
+    license_plate?: string;
+    pathologies?: string; // TO DO: Por definir estructura
+    locality_id?: string;
+    locality_name?: string;
     observations?: string;
-    hidden: boolean;
+    hidden_at?: string;
 }

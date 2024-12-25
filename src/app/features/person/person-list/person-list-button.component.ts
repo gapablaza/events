@@ -1,12 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
   standalone: true,
   template: `<button (click)="buttonClicked()">+ Info</button>`,
+  imports: [],
 })
 export class PersonListButtonComponent implements ICellRendererAngularComp {
+  _router = inject(Router);
   _params!: ICellRendererParams;
 
   agInit(params: ICellRendererParams): void {
@@ -16,7 +19,7 @@ export class PersonListButtonComponent implements ICellRendererAngularComp {
     return true;
   }
   buttonClicked() {
-    alert('Info');
     console.log(this._params.data);
+    this._router.navigateByUrl('person/edit/' + this._params.data.id);
   }
 }

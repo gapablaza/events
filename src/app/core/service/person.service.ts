@@ -1,8 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, collectionData, Firestore } from '@angular/fire/firestore';
+import { addDoc, collection, collectionData, collectionSnapshots, doc, docData, Firestore, QueryDocumentSnapshot, updateDoc } from '@angular/fire/firestore';
 import { map, Observable } from 'rxjs';
 
 import { Person } from '../model';
+
+export type PersonCreate = Omit<Person, 'id'>;
 
 @Injectable({
   providedIn: 'root',
@@ -23,5 +25,30 @@ export class PersonService {
         })
       )
     );
+  }
+
+  get(personId: string): Observable<Person> {
+    const refPerson = doc(this._firestore, `person/${personId}`);
+    let person = docData(refPerson) as Observable<any>;
+
+    return person.pipe(
+      map((person) => {
+        return { ...person, id: personId } as Person;
+      })
+    );
+  }
+
+  add(person: PersonCreate) {
+    const refPerson = collection(this._firestore, 'person');
+    return addDoc(refPerson, {
+      ...person,
+    });
+  }
+
+  update(person: Person) {
+    const refPerson = doc(this._firestore, `person/${person.id}`);
+    return updateDoc(refPerson, {
+      ...person,
+    });
   }
 }

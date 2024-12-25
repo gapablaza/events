@@ -7,11 +7,10 @@ import { AuthService } from './auth/auth.service';
 import { AuthUser } from './core/model';
 
 @Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss'
+    selector: 'app-root',
+    imports: [RouterOutlet, RouterLink],
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   private firestore = inject(Firestore);

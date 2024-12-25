@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 
 import { ActivityService } from "../../../core/service";
 import { Activity } from "../../../core/model";
@@ -6,11 +6,14 @@ import { Activity } from "../../../core/model";
 @Component({
     selector: "app-activity-list",
     templateUrl: "./activity-list.component.html",
-    standalone: true,
-    imports: [],
+    imports: []
 })
 export class ActivityListComponent implements OnInit {
-    activities: Activity[] = [];
+    private _activitySrv = inject(ActivityService);
+
+    activities = signal<Activity[]>([]);
+    // activities: Activity[] = [];
+
 
     constructor(
         private activitySrv: ActivityService
@@ -19,9 +22,9 @@ export class ActivityListComponent implements OnInit {
     ngOnInit(): void {
         console.log('ActivityListComponent');
 
-        // this.activitySrv.list().subscribe(activities => {
-        //     this.activities = activities;
-        //     console.log(activities);
-        // })
+        this.activitySrv.list().subscribe(activities => {
+            this.activities.set(activities);
+            console.log(activities);
+        })
     }
 }

@@ -1,0 +1,98 @@
+<section class="registration registration-section">
+    <div class="card">
+        <h1>
+            Formulario de inscripción
+        </h1>
+
+        <div style="display: flex;">
+            @if (isLoaded()) {
+
+            <div class="person-form" style="flex-grow: 1;">
+                <form [formGroup]="registrationForm" (ngSubmit)="registrationForm.valid && onSubmit()">
+                    <p>
+                        <label for="">Persona</label>
+                        <select formControlName="person_id" (change)="onSelectPerson(selectPerson.value)" #selectPerson>
+                            <option value="">Seleccione una persona</option>
+                            <option *ngFor="let person of persons()" [value]="person.id">
+                                {{ person.name }} {{ person.first_name }} - {{ person.locality_name }}
+                            </option>
+                        </select>
+                    </p>
+                    <p>
+                        <label for="">Localidad</label>
+                        <select formControlName="locality_id" (change)="onSelectLocality(selectLocality.value)"
+                            #selectLocality>
+                            <option value="">Seleccione una localidad</option>
+                            <option *ngFor="let locality of localities()" [value]="locality.id">
+                                {{ locality.display_name }}
+                            </option>
+                        </select>
+                    </p>
+                    <p formArrayName="activities">
+                        <!-- <div formArrayName="activities"> -->
+                            <label for="">Actividades</label>
+                            @for (activity of activities(); track $index; let i = $index) {
+                                <label>
+                                    <input type="checkbox" [formControlName]="i" (change)="onSelectActivity()"/>
+                                    {{ activity.name }}
+                                  </label>
+                            }
+                        <!-- </div> -->
+                    </p>
+                    <p>
+                        <label for="">CODE</label>
+                        <input type="text" formControlName="code">
+                    </p>
+                    <p>
+                        <label for="">Costo total</label>
+                        <input type="number" formControlName="total_cost">
+                    </p>
+                    <p>
+                        <label for="">Requiere alojamiento</label>
+                        <select formControlName="requires_accommodation">
+                            <option value="">Seleccione</option>
+                            <option value=true>Sí</option>
+                            <option value=false>No</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label for="">Patente</label>
+                        <input type="text" formControlName="license_plate">
+                    </p>
+                    <p>
+                        <label for="">Propietario del vehículo</label>
+                        <select formControlName="vehicle_owner">
+                            <option value="">Seleccione</option>
+                            <option value=true>Sí</option>
+                            <option value=false>No</option>
+                        </select>
+                    </p>
+                    <p>
+                        <label for="">Observaciones</label>
+                        <input type="text" formControlName="observations">
+                    </p>
+
+                    <p>
+                        <a [routerLink]="['/event']" class="color-accent">volver</a>
+                    </p>
+
+                    <button type="submit" [disabled]="registrationForm.invalid">Guardar</button>
+                </form>
+            </div>
+
+            @if (selectedPerson()) {
+            <div class="person-info" style="flex-grow: 1;">
+                <p>Nombres: {{ selectedPerson()?.name }} {{ selectedPerson()?.middle_name }}</p>
+                <p>Apellidos: {{ selectedPerson()?.first_name }} {{ selectedPerson()?.last_name }}</p>
+                <p>Fecha de Nacimiento: {{ selectedPerson()?.birthday }}</p>
+                <p>Sexo: {{ selectedPerson()?.gender }}</p>
+                <p>Profesión u Oficio: {{ selectedPerson()?.profession }}</p>
+            </div>
+            }
+
+            } @else {
+            <h1>Cargando...</h1>
+            }
+        </div>
+    </div>
+</section>

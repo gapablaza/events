@@ -7,15 +7,13 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AsyncPipe } from '@angular/common';
 
 import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  standalone: true,
-  imports: [RouterLink, ReactiveFormsModule, AsyncPipe],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    imports: [RouterLink, ReactiveFormsModule]
 })
 export class LoginComponent {
   fb = inject(FormBuilder);

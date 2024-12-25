@@ -1,0 +1,24 @@
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre Compuesto</th>
+            <th>Nombre</th>
+            <th>Sector</th>
+            <th>Región</th>
+            <th>País</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (item of localities; track item.id) {
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.display_name }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.sector }}</td>
+                <td>{{ item.region }}</td>
+                <td>{{ item.country }}</td>
+            </tr>
+        }
+    </tbody>
+</table>

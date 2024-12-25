@@ -14,10 +14,9 @@ import {
 import { AttendanceByCodeComponent } from '../../attendance/attendance-by-code/attendance-by-code.component';
 
 @Component({
-  selector: 'app-activity-profile',
-  templateUrl: './activity-profile.component.html',
-  standalone: true,
-  imports: [AttendanceListComponent, AttendanceByCodeComponent],
+    selector: 'app-activity-profile',
+    templateUrl: './activity-profile.component.html',
+    imports: [AttendanceListComponent, AttendanceByCodeComponent]
 })
 export class ActivityProfileComponent implements OnInit {
   private firestore = inject(Firestore);

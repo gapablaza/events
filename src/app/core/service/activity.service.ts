@@ -21,18 +21,26 @@ import { Activity, Attendance } from '../model';
 })
 export class ActivityService {
   private firestore = inject(Firestore);
+  private RUCACURA_ID = 'F5yR5ftWYE3GCpve1G85';
 
   list(): Observable<Activity[]> {
-    const refActivities = collection(this.firestore, 'activity');
+    const refActivities = query(
+      collection(this.firestore, 'activity'),
+      where('event_id', '==', this.RUCACURA_ID)
+    );
+
+    // const refActivities = collection(this.firestore, 'activity');
     let activities = collectionData(refActivities, {
       idField: 'id',
     }) as Observable<any[]>;
 
     return activities.pipe(
       map((activities) =>
-        activities.map((activity) => {
-          return { ...activity.info, id: activity.id } as Activity;
-        })
+        activities
+          .map((activity) => {
+            return { ...activity, id: activity.id } as Activity;
+          })
+          .sort((a, b) => (a.position || 0) - (b.position || 0))
       )
     );
   }
