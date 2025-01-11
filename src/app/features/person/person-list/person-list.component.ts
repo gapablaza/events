@@ -1,23 +1,33 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef, GridReadyEvent } from 'ag-grid-community'; // Column Definition Type Interface
 
-import { PersonService } from '../../../core/service';
-import { Person } from '../../../core/model';
 import { PersonListButtonComponent } from './person-list-button.component';
+import { appFeature } from '../../../store/app.state';
+import { personFeature } from '../store/person.state';
 
 @Component({
-    selector: 'app-person-list',
-    templateUrl: './person-list.component.html',
-    imports: [AgGridAngular, RouterLink]
+  selector: 'app-person-list',
+  templateUrl: './person-list.component.html',
+  standalone: true,
+  imports: [AgGridAngular, RouterLink],
 })
 export class PersonListComponent {
-  private _personSrv = inject(PersonService);
+  private store = inject(Store);
 
-  persons: Person[] = [];
+  localities = this.store.selectSignal(appFeature.selectLocalities);
+  persons = this.store.selectSignal(personFeature.selectPersons);
 
   colDefs: ColDef[] = [
+    {
+      field: 'actions',
+      headerName: 'Acciones',
+      width: 100,
+      pinned: 'left',
+      cellRenderer: PersonListButtonComponent,
+    },
     { field: 'rut', headerName: 'Rut', filter: true },
     { field: 'name', headerName: 'Nombre', filter: true },
     { field: 'middle_name', headerName: '2do Nombre', filter: true },
@@ -27,23 +37,28 @@ export class PersonListComponent {
     { field: 'email', headerName: 'Email', filter: true },
     { field: 'phone', headerName: 'Teléfono', filter: true },
     { field: 'address', headerName: 'Dirección', filter: true },
-    { field: 'gender', headerName: 'Género', filter: true },
+    { field: 'gender', headerName: 'Sexo', filter: true },
     { field: 'profession', headerName: 'Profesión u Oficio', filter: true },
     { field: 'license_plate', headerName: 'Patente', filter: true },
-    { field: 'pathologies', headerName: 'Patologías', filter: true },
-    { field: 'locality_name', headerName: 'Localidad / Sector', filter: true },
-    { field: 'observations', headerName: 'Observaciones', filter: true },
     {
-      field: 'actions',
-      headerName: 'Actions',
-      cellRenderer: PersonListButtonComponent,
+      field: 'medical_conditions',
+      headerName: 'Condición médica',
+      filter: true,
     },
+    {
+      headerName: 'Localidad / Sector',
+      valueGetter: (r) =>
+        this.localities().find((l) => l.id === r.data.locality_id)
+          ?.display_name,
+      filter: true,
+    },
+    { field: 'observations', headerName: 'Observaciones', filter: true },
   ];
 
   onGridReady(params: GridReadyEvent) {
-    this._personSrv.list().subscribe((persons) => {
-      this.persons = persons;
-      console.log(persons);
-    });
+    // this._personSrv.list().subscribe((persons) => {
+    //   this.persons = persons;
+    //   console.log(persons);
+    // });
   }
 }

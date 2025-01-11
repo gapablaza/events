@@ -1,25 +1,41 @@
-<section class="auth auth-section">
-  <div class="login card">
-    <h1>
-      Ingresar
-    </h1>
-    <p>
-      ¿No tienes una cuenta?
-      <a [routerLink]="['/signup']" class="color-accent">Regístrate</a>
-    </p>
+<section class="bg-gray-50 py-6 dark:bg-gray-900">
+  <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
 
-    <div class="login-form">
-      <form [formGroup]="loginForm" (ngSubmit)="loginForm.valid && onSubmit()">
-        <input type="email" formControlName="email" email required>
-        <input type="password" formControlName="password" required minlength="6">
+    <div
+      class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
 
-        <p>
-          <a [routerLink]="['/forgot-password']" class="color-accent">¿Olvidaste tu contraseña?</a>
-        </p>
+        <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+          Ingresar
+        </h1>
 
-        <button type="submit" [disabled]="loginForm.invalid">Ingresar</button>
-      </form>
+        <div class="space-y-4 md:space-y-6">
+          <form [formGroup]="loginForm" (ngSubmit)="loginForm.valid && onSubmit()">
 
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="email" id="email" formControlName="email" email required>
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-bold mb-2" for="pass">Contraseña</label>
+              <input
+                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="password" id="pass" formControlName="password" required minlength="6">
+            </div>
+
+            <div class="flex items-center justify-between">
+              <button
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="submit" [disabled]="loginForm.invalid || (isProcessing$ | async)">Ingresar</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
     </div>
+
   </div>
 </section>

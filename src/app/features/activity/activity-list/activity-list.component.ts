@@ -6,6 +6,7 @@ import { Activity } from "../../../core/model";
 @Component({
     selector: "app-activity-list",
     templateUrl: "./activity-list.component.html",
+    standalone: true,
     imports: []
 })
 export class ActivityListComponent implements OnInit {

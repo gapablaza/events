@@ -1,44 +1,30 @@
-import { AsyncPipe, JsonPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
-import { collection, collectionData, doc, docData, Firestore } from '@angular/fire/firestore';
 import { RouterLink, RouterOutlet } from '@angular/router';
+import { Store } from '@ngrx/store';
 
-import { AuthService } from './auth/auth.service';
-import { AuthUser } from './core/model';
+import { version } from '../../package.json';
+import { appFeature } from './store/app.state';
+import { appActions } from './store/app.actions';
 
 @Component({
-    selector: 'app-root',
-    imports: [RouterOutlet, RouterLink],
-    templateUrl: './app.component.html',
-    styleUrl: './app.component.scss'
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrl: './app.component.scss',
+  standalone: true,
+  imports: [RouterOutlet, RouterLink],
 })
 export class AppComponent implements OnInit {
-  private firestore = inject(Firestore);
-  authSrv = inject(AuthService);
+  store = inject(Store);
 
-  title = 'events';
-
-  refDoc = doc(this.firestore, 'activity/VIaRKPPGshhtKOE5CcEa');
-  testDoc = docData(this.refDoc);
-
-  refCol = collection(this.firestore, 'activity');
-  testCol = collectionData(this.refCol);
+  isInit = this.store.selectSignal(appFeature.selectIsInit);
+  isAuth = this.store.selectSignal(appFeature.selectIsAuth);
+  v = version;
 
   ngOnInit(): void {
-    this.authSrv.user$.subscribe((user: AuthUser) => {
-      if (user) {
-        this.authSrv.currentUserSig.set({
-          uid: user.uid,
-          email: user.email
-        });
-      } else {
-        this.authSrv.currentUserSig.set(null);
-      }
-      console.log(this.authSrv.currentUserSig());
-    });
+    this.store.dispatch(appActions.checkAuth());
   }
 
   logout() {
-    this.authSrv.logout();
+    this.store.dispatch(appActions.logoutStart());
   }
 }

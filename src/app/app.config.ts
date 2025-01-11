@@ -5,28 +5,37 @@ import { initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 
-import { provideStore } from '@ngrx/store';
+import { provideState, provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
+import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideToastr } from 'ngx-toastr';
+
 import APP_ROUTES from './app.routes';
+import { environment } from '../environments/environment';
+import { appFeature } from './store/app.state';
+import { AppEffects } from './store/app.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(APP_ROUTES, withComponentInputBinding()),
-    provideFirebaseApp(() => initializeApp({
-        projectId: 'events-77388',
-        appId: '1:316890990808:web:34a48f2df1ec3e2b016fad',
-        storageBucket: 'events-77388.appspot.com',
-        apiKey: 'AIzaSyDt6b4k_5zISR_t12vV5Zsrr60zyaji0yU',
-        authDomain: 'events-77388.firebaseapp.com',
-        messagingSenderId: '316890990808',
-    })),
+    provideAnimations(),
+
+    provideFirebaseApp(() => initializeApp(environment.firebase)),
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
+
     provideStore(),
-    provideEffects(),
-    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() })
+    provideState(appFeature),
+    provideEffects([AppEffects]),
+    provideStoreDevtools({ maxAge: 25, logOnly: !isDevMode() }),
+    
+    provideToastr({
+      timeOut: 5000,
+      positionClass: 'toast-top-right',
+      preventDuplicates: true,
+    }),
 ],
 };

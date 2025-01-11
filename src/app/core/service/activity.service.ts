@@ -2,7 +2,6 @@ import { inject, Injectable } from '@angular/core';
 import {
   collection,
   collectionData,
-  collectionGroup,
   doc,
   docData,
   Firestore,
@@ -12,7 +11,7 @@ import {
   updateDoc,
   where,
 } from '@angular/fire/firestore';
-import { filter, from, map, Observable, switchMap, take, tap } from 'rxjs';
+import { filter, from, map, Observable, take, tap } from 'rxjs';
 
 import { Activity, Attendance } from '../model';
 
@@ -55,20 +54,6 @@ export class ActivityService {
       })
     );
   }
-
-  //   attendance(activityId: string): Observable<Attendance[]> {
-  //     const q = query(
-  //       collection(this.firestore, 'attendance'), where('activity_id', '==', activityId)
-  //     );
-
-  //     return from(getDocs(q)).pipe(
-  //       map((snapshot) => {
-  //           return snapshot.docs.map((doc) => {
-  //               return { ...doc.data(), id: doc.id } as Attendance;
-  //           })
-  //       })
-  //     );
-  //   }
 
   attendance(activityId: string): Observable<Attendance[]> {
     const attendanceRef = query(

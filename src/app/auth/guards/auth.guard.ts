@@ -1,23 +1,20 @@
 import { inject } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { Observable, filter, map, switchMap, take } from 'rxjs';
+import { Router } from '@angular/router';
+import { filter, map, switchMap, take } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { authFeature } from '../../modules/auth/store/auth.state';
-import { authActions } from '../../modules/auth/store/auth.actions';
+import { appFeature } from '../../store/app.state';
 
-export const authGuard = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-): Observable<boolean> => {
+export const authGuard = () => {
+  const router = inject(Router);
   const store = inject(Store);
 
-  return store.select(authFeature.selectIsInit).pipe(
+  return store.select(appFeature.selectIsInit).pipe(
     filter((isInit) => !!isInit),
-    switchMap(() => store.select(authFeature.selectIsAuth)),
+    switchMap(() => store.select(appFeature.selectIsAuth)),
     map((isAuth) => {
       if (!isAuth) {
-        store.dispatch(authActions.loginRedirect({ url: state.url }));
+        router.navigate(['/login']);
         return false;
       }
 

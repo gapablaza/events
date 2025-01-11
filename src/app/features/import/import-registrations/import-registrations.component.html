@@ -1,0 +1,12 @@
+<div class="import-container">
+    <h1>Importar Inscripciones</h1>
+    <input type="file" (change)="onFileSelected($event)" accept=".json" />
+    <button [disabled]="!fileContent || !localities()" (click)="importData()">Importar</button>
+  
+    @if (importStatus) {
+      <div class="status-message">
+        {{ importStatus }}
+      </div>
+    }
+  </div>
+  

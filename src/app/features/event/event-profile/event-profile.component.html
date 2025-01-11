@@ -1,0 +1,49 @@
+<section class="bg-gray-50 m-6 p-6 dark:bg-gray-900">
+
+    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+        RUCACURA 2025
+    </h1>
+    <p>CAMPAMENTO ZONA SUR RUCACURA DEL 27 DE ENERO AL 02 DE FEBRERO DE 2025</p>
+    <a class="group inline-flex items-center h-9 rounded-full text-sm font-semibold whitespace-nowrap px-3 focus:outline-none focus:ring-2 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 focus:ring-slate-500 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:focus:ring-slate-500 mt-6"
+        routerLink="registrations">{{ registrationsCount() }} Inscritos
+        <svg class="overflow-visible ml-3 text-slate-300 group-hover:text-slate-400 dark:text-slate-500 dark:group-hover:text-slate-400"
+            width="3" height="6" viewBox="0 0 3 6" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M0 0L3 3L0 6"></path>
+        </svg>
+    </a>
+    <a class="group inline-flex items-center h-9 rounded-full text-sm font-semibold whitespace-nowrap px-3 focus:outline-none focus:ring-2 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 focus:ring-slate-500 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:focus:ring-slate-500 mt-6"
+        routerLink="registrations/add">Nueva Inscripción
+        <svg class="overflow-visible ml-3 text-slate-300 group-hover:text-slate-400 dark:text-slate-500 dark:group-hover:text-slate-400"
+            width="3" height="6" viewBox="0 0 3 6" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M0 0L3 3L0 6"></path>
+        </svg>
+    </a>
+
+    <h2 class="font-bold text-gray-900 mt-9">Listado de Actividades</h2>
+
+    <ul>
+        @for (item of activities(); track $index) {
+            <li>{{ item.name }} ({{ item.registrationCount }} registrados)</li>
+        }    
+    </ul>
+    <!-- @for (item of activities(); track $index) {
+    <div class="rounded-lg shadow border border-gray-300 p-4 m-6">
+        <h2 class="font-bold text-gray-900">{{ item.name }}</h2>
+        <p>
+            {{ item.description }}
+        <br />{{ item.registrationCount }} registrados
+        </p>
+        <a class="group inline-flex items-center h-9 rounded-full text-sm font-semibold whitespace-nowrap px-3 focus:outline-none focus:ring-2 bg-slate-100 text-slate-700 hover:bg-slate-200 hover:text-slate-900 focus:ring-slate-500 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600 dark:hover:text-white dark:focus:ring-slate-500 mt-4"
+            routerLink="activity/{{ item.id }}">Registrados
+            <svg class="overflow-visible ml-3 text-slate-300 group-hover:text-slate-400 dark:text-slate-500 dark:group-hover:text-slate-400"
+                width="3" height="6" viewBox="0 0 3 6" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M0 0L3 3L0 6"></path>
+            </svg>
+        </a>
+    </div>
+    } -->
+
+</section>

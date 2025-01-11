@@ -7,6 +7,7 @@ import { PersonFormComponent } from "../person-form/person-form.component";
 @Component({
   selector: 'app-person-edit',
   templateUrl: './person-edit.component.html',
+  standalone: true,
   imports: [PersonFormComponent],
 })
 export class PersonEditComponent {
@@ -24,7 +25,5 @@ export class PersonEditComponent {
         });
       }
     });
-
-    // console.log(this.personId());
   }
 }

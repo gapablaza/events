@@ -16,6 +16,7 @@ import { AttendanceByCodeComponent } from '../../attendance/attendance-by-code/a
 @Component({
     selector: 'app-activity-profile',
     templateUrl: './activity-profile.component.html',
+    standalone: true,
     imports: [AttendanceListComponent, AttendanceByCodeComponent]
 })
 export class ActivityProfileComponent implements OnInit {
@@ -791,7 +792,7 @@ export class ActivityProfileComponent implements OnInit {
         //   return 1;
         // }
         // return 0;
-        return a.person_info.name.localeCompare(b.person_info.name, "es");
+        return (a.person_info?.name || '').localeCompare(b.person_info?.name || '', "es");
       });
       // console.log(attendance);
     });

@@ -4,7 +4,7 @@
         <ol>
             @for (item of attendance(); track item.id) {
                 <li [ngClass]="item.attendance_time ? 'checked' : ''">
-                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
                     @if (!item.attendance_time) {
                         <button (click)="check(item)">Presente</button>
                     }
@@ -17,7 +17,7 @@
         <ol>
             @for (item of checked(); track item.id) {
                 <li>
-                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
                     @if (!item.attendance_time) {
                         <button (click)="check(item)">Presente</button>
                     }
@@ -31,7 +31,7 @@
         <ol>
             @for (item of unchecked(); track item.id) {
                 <li>
-                    {{ item.person_info.name }} {{ item.person_info.first_name }} [Código: {{ item.attendance_code }}]
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
                     @if (!item.attendance_time) {
                         <button (click)="check(item)">Presente</button>
                     }

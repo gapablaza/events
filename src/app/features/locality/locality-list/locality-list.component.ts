@@ -6,6 +6,7 @@ import { Locality } from '../../../core/model';
 @Component({
   selector: 'app-locality-list',
   templateUrl: './locality-list.component.html',
+  standalone: true,
   imports: [],
 })
 export class LocalityListComponent implements OnInit {

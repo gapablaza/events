@@ -6,6 +6,7 @@ import { NgClass } from "@angular/common";
 @Component({
     selector: "app-attendance-list",
     templateUrl: "./attendance-list.component.html",
+    standalone: true,
     imports: [NgClass]
 })
 export class AttendanceListComponent {

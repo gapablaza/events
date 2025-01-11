@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, input, OnInit, signal } from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -8,109 +8,188 @@ import {
   Validators,
 } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { NgFor } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { Store } from '@ngrx/store';
 
-import {
-  EventService,
-  LocalityService,
-  PersonService,
-} from '../../../core/service';
-import { Activity, Locality, Person } from '../../../core/model';
+import { PersonService } from '../../../core/service';
+import { Locality, Person, Registration } from '../../../core/model';
+import { appFeature } from '../../../store/app.state';
+import { eventFeature } from '../store/event.state';
+import { eventActions } from '../store/event.actions';
 
 @Component({
   selector: 'app-event-registration-form',
   templateUrl: './event-registration-form.component.html',
-  imports: [ReactiveFormsModule, RouterLink, NgFor],
+  standalone: true,
+  imports: [ReactiveFormsModule, RouterLink, NgClass],
 })
 export class EventRegistrationFormComponent implements OnInit {
+  private store = inject(Store);
   private _fb = inject(FormBuilder);
-  private _personSrv = inject(PersonService);
-  private _localitySrv = inject(LocalityService);
-  private _eventSrv = inject(EventService);
+  private personSrv = inject(PersonService);
 
-  isLoaded = signal(true);
+  localities = this.store.selectSignal(appFeature.selectLocalities);
+  activities = this.store.selectSignal(eventFeature.selectActivities);
 
   persons = signal<Person[]>([]);
-  localities = signal<Locality[]>([]);
-  activities = signal<Activity[]>([]);
+  registration = input<Registration | null>(null);
+
+  isLoaded = signal(false);
+  isProcessing = this.store.selectSignal(eventFeature.selectIsProcessing);
+  mode = signal<'create' | 'update' | null>(null);
+
   selectedPerson = signal<Person | null>(null);
   selectedLocality = signal<Locality | null>(null);
 
   readonly registrationForm = new FormGroup({
-    locality_id: new FormControl('', {
-      validators: [Validators.required],
-    }),
-    // locality_info: new FormControl(''),
+    id: new FormControl(''),
     person_id: new FormControl('', {
       validators: [Validators.required],
     }),
-    // person_info: new FormControl(''),
+    locality_id: new FormControl('', {
+      validators: [Validators.required],
+    }),
+    activities: new FormArray<any>([]),
     activities_registered: new FormControl('', {
       validators: [Validators.required],
     }),
-    activities: new FormArray([]),
-    total_cost: new FormControl<number>(0),
+    total_cost: new FormControl<number>(0, {
+      validators: [Validators.required],
+    }),
+    total_paid: new FormControl<number>(0, {
+      validators: [Validators.required],
+    }),
     code: new FormControl<string>(''),
-    requires_accommodation: new FormControl<boolean | null>(null),
+    inside_enclosure: new FormControl<boolean | string | null>(null),
     license_plate: new FormControl<string>(''),
-    vehicle_owner: new FormControl<boolean | null>(null),
+    vehicle_owner: new FormControl<boolean | string | null>(null),
     observations: new FormControl<string>(''),
   });
 
   ngOnInit(): void {
-    this._localitySrv.list().subscribe((localities) => {
-      this.localities.set(localities);
-      console.log(this.localities());
-    });
+    if (this.registration()) {
+      this.mode.set('update');
 
-    this._eventSrv.activities().subscribe((activities) => {
-      this.activities.set(activities);
+      // Precargar los datos de la persona
+      this.selectedPerson.set(this.registration()?.person_info!);
+      this.persons.set([this.registration()?.person_info!]);
+
+      // Precargar los datos de la localidad
+      this.selectedLocality.set(
+        this.localities().find(
+          (l) => l.id === this.registration()?.locality_id
+        )!
+      );
+
+      // Precargar los datos de la inscripción
+      const selectedActivities = this.registration()!.activities_registered!;
+      this.registrationForm.patchValue({
+        ...this.registration(),
+        activities_registered: selectedActivities.join(','),
+      });
+      this.registrationForm.get('person_id')?.disable();
+
+      // Marcar checkboxes de actividades seleccionadas
+      this.populateCheckboxes(selectedActivities);
+    } else {
+      this.mode.set('create');
       this.populateCheckboxes();
-      console.log(this.activities());
-    });
 
-    this._personSrv.list().subscribe((persons) => {
-      this.persons.set(persons.sort((a, b) => a.name.localeCompare(b.name)));
-      console.log(persons);
-    });
+      // TO DO: cambiar por autocompletado
+      this.personSrv.list().subscribe((persons) => {
+        this.persons.set(persons.sort((a, b) => a.name.localeCompare(b.name)));
+
+        // si se modifica la persona seleccionada de manera externa, se actualiza la de acá
+        if (this.selectedPerson()) {
+          let tempPerson = persons.find(
+            (p) => p.id === this.selectedPerson()?.id
+          );
+          if (tempPerson) {
+            this.selectedPerson.set(tempPerson);
+          }
+        }
+      });
+    }
+
+    this.isLoaded.set(true);
   }
 
-  populateCheckboxes(): void {
+  populateCheckboxes(selectedActivities: string[] = []): void {
     const activityFormArray = this.registrationForm.get(
       'activities'
     ) as FormArray;
-    this.activities().forEach(() =>
-      activityFormArray.push(this._fb.control(false))
-    );
+    activityFormArray.clear(); // Limpiar checkboxes previos
+
+    this.activities().forEach((activity) => {
+      const isSelected = selectedActivities.includes(activity.id);
+      activityFormArray.push(this._fb.control(isSelected));
+    });
   }
 
   onSubmit() {
     if (this.registrationForm.valid) {
-      this._eventSrv
-        .registrate(
-          this.selectedPerson()!,
-          this.selectedLocality()!,
-          this.registrationForm.value.activities_registered!.split(','),
-          {
-            code: this.registrationForm.value.code || undefined,
-            totalCost: this.registrationForm.value.total_cost || undefined,
-            requiresAccommodation:
-              this.registrationForm.value.requires_accommodation || undefined,
-            licensePlate:
-              this.registrationForm.value.license_plate || undefined,
-            vehicleOwner:
-              this.registrationForm.value.vehicle_owner || undefined,
-            observations: this.registrationForm.value.observations || undefined,
-          }
-        )
-        .then(() => console.log('registro exitoso'))
-        .catch((err) => {
-          const errorMessage =
-            err instanceof Error ? err.message : 'Error inesperado';
-          alert(`Error al registrar: ${errorMessage}`);
-        });
+      let tempInsideEnclosure: boolean | undefined = undefined;
+      if (
+        this.registrationForm.value.inside_enclosure === 'true' ||
+        this.registrationForm.value.inside_enclosure === true
+      ) {
+        tempInsideEnclosure = true;
+      }
+      if (
+        this.registrationForm.value.inside_enclosure === 'false' ||
+        this.registrationForm.value.inside_enclosure === false
+      ) {
+        tempInsideEnclosure = false;
+      }
+
+      let tempVehicleOwner: boolean | undefined = undefined;
+      if (
+        this.registrationForm.value.vehicle_owner === 'true' ||
+        this.registrationForm.value.vehicle_owner === true
+      ) {
+        tempVehicleOwner = true;
+      }
+      if (
+        this.registrationForm.value.vehicle_owner === 'false' ||
+        this.registrationForm.value.vehicle_owner === false
+      ) {
+        tempVehicleOwner = false;
+      }
+
+      const registrationData = {
+        totalCost: this.registrationForm.value.total_cost ?? 0,
+        totalPaid: this.registrationForm.value.total_paid ?? 0,
+        code: this.registrationForm.value.code ?? undefined,
+        insideEnclosure: tempInsideEnclosure,
+        licensePlate: this.registrationForm.value.license_plate ?? undefined,
+        vehicleOwner: tempVehicleOwner,
+        observations: this.registrationForm.value.observations ?? undefined,
+      };
+
+      if (this.registration()) {
+        // Actualizar inscripción
+        this.store.dispatch(
+          eventActions.editRegistration({
+            updatedPerson: this.selectedPerson()!,
+            updatedLocality: this.selectedLocality()!,
+            updatedActivitiesIds:
+              this.registrationForm.value.activities_registered!.split(','),
+            updatedRegistrationData: registrationData,
+          })
+        );
+      } else {
+        // Crear inscripción
+        this.store.dispatch(
+          eventActions.createRegistration({
+            person: this.selectedPerson()!,
+            locality: this.selectedLocality()!,
+            activitiesIds:
+              this.registrationForm.value.activities_registered!.split(','),
+            registrationData,
+          })
+        );
+      }
     }
-    console.log(this.registrationForm.value);
   }
 
   onSelectPerson(personId: string) {
@@ -172,10 +251,16 @@ export class EventRegistrationFormComponent implements OnInit {
       .filter((id: string | null) => id !== null)
       .join(','); // Generar la cadena con los IDs separados por coma
 
-    // console.log('Selected Activity IDs:', selectedActivities);
-
     this.registrationForm.patchValue({
       activities_registered: selectedActivities ?? null,
     });
+  }
+
+  onDelete() {
+    if (this.registration()) {
+      this.store.dispatch(
+        eventActions.deleteRegistration({ id: this.registration()!.id })
+      );
+    }
   }
 }

@@ -1,98 +1,199 @@
-<section class="registration registration-section">
-    <div class="card">
-        <h1>
-            Formulario de inscripción
-        </h1>
+<section class="bg-gray-50 py-6 dark:bg-gray-900">
+    <div class="flex flex-row items-start justify-center px-6 py-8 mx-auto lg:py-0">
 
-        <div style="display: flex;">
-            @if (isLoaded()) {
+        <div
+            class="w-full bg-white rounded-lg shadow dark:border mr-6 md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    @let title = mode() == 'create' ? 'Nueva' : 'Editar';
+                    <span>{{ title }}</span> inscripción
+                </h1>
 
-            <div class="person-form" style="flex-grow: 1;">
-                <form [formGroup]="registrationForm" (ngSubmit)="registrationForm.valid && onSubmit()">
-                    <p>
-                        <label for="">Persona</label>
-                        <select formControlName="person_id" (change)="onSelectPerson(selectPerson.value)" #selectPerson>
-                            <option value="">Seleccione una persona</option>
-                            <option *ngFor="let person of persons()" [value]="person.id">
-                                {{ person.name }} {{ person.first_name }} - {{ person.locality_name }}
-                            </option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="">Localidad</label>
-                        <select formControlName="locality_id" (change)="onSelectLocality(selectLocality.value)"
-                            #selectLocality>
-                            <option value="">Seleccione una localidad</option>
-                            <option *ngFor="let locality of localities()" [value]="locality.id">
-                                {{ locality.display_name }}
-                            </option>
-                        </select>
-                    </p>
-                    <p formArrayName="activities">
-                        <!-- <div formArrayName="activities"> -->
-                            <label for="">Actividades</label>
-                            @for (activity of activities(); track $index; let i = $index) {
-                                <label>
-                                    <input type="checkbox" [formControlName]="i" (change)="onSelectActivity()"/>
-                                    {{ activity.name }}
-                                  </label>
+                @if (isLoaded()) {
+
+                <div class="space-y-4 md:space-y-6">
+                    <form [formGroup]="registrationForm" (ngSubmit)="registrationForm.valid && onSubmit()">
+
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="person">Persona<span
+                                    class="text-red-500">*</span></label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                [ngClass]="{'border-red-500': registrationForm.get('person_id')?.invalid && registrationForm.get('person_id')?.touched}"
+                                id="person" formControlName="person_id" (change)="onSelectPerson(selectPerson.value)"
+                                required #selectPerson>
+                                <option value="">Seleccione una persona</option>
+                                @for (person of persons(); track $index) {
+                                <option [value]="person.id">
+                                    {{ person.name }} {{ person.first_name }} {{ person.last_name }}
+                                </option>
+                                }
+                            </select>
+                            @if (registrationForm.get('person_id')?.touched &&
+                            registrationForm.get('person_id')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                Debe seleccionar una persona.
+                            </div>
                             }
-                        <!-- </div> -->
-                    </p>
-                    <p>
-                        <label for="">CODE</label>
-                        <input type="text" formControlName="code">
-                    </p>
-                    <p>
-                        <label for="">Costo total</label>
-                        <input type="number" formControlName="total_cost">
-                    </p>
-                    <p>
-                        <label for="">Requiere alojamiento</label>
-                        <select formControlName="requires_accommodation">
-                            <option value="">Seleccione</option>
-                            <option value=true>Sí</option>
-                            <option value=false>No</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="">Patente</label>
-                        <input type="text" formControlName="license_plate">
-                    </p>
-                    <p>
-                        <label for="">Propietario del vehículo</label>
-                        <select formControlName="vehicle_owner">
-                            <option value="">Seleccione</option>
-                            <option value=true>Sí</option>
-                            <option value=false>No</option>
-                        </select>
-                    </p>
-                    <p>
-                        <label for="">Observaciones</label>
-                        <input type="text" formControlName="observations">
-                    </p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
+                                    class="text-red-500">*</span></label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                [ngClass]="{'border-red-500': registrationForm.get('locality_id')?.invalid && registrationForm.get('locality_id')?.touched}"
+                                id="locality" formControlName="locality_id"
+                                (change)="onSelectLocality(selectLocality.value)" required #selectLocality>
+                                <option value="">Seleccione una localidad</option>
+                                @for (locality of localities(); track $index) {
+                                <option [value]="locality.id">
+                                    {{ locality.display_name }}
+                                </option>
+                                }
+                            </select>
+                            @if (registrationForm.get('locality_id')?.touched &&
+                            registrationForm.get('locality_id')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                Debe seleccionar una localidad.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4" formArrayName="activities">
+                            <label class="block text-gray-700 text-sm font-bold mb-2">Actividades<span
+                                    class="text-red-500">*</span></label>
+                            @for (activity of activities(); track $index; let i = $index) {
+                            <label class="block text-sm">
+                                <input type="checkbox" [formControlName]="i" (change)="onSelectActivity()" />
+                                {{ activity.name }}
+                            </label>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="cost">Monto total a
+                                pagar<span class="text-red-500">*</span></label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': registrationForm.get('total_cost')?.invalid && registrationForm.get('total_cost')?.touched}"
+                                type="number" id="cost" formControlName="total_cost" required>
+                            @if (registrationForm.get('total_cost')?.touched &&
+                            registrationForm.get('total_cost')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El monto a pagar es obligatorio.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="paid">Monto pagado<span
+                                    class="text-red-500">*</span></label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': registrationForm.get('total_paid')?.invalid && registrationForm.get('total_paid')?.touched}"
+                                type="number" id="paid" formControlName="total_paid" required>
+                            @if (registrationForm.get('total_paid')?.touched &&
+                            registrationForm.get('total_paid')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El monto pagado es obligatorio.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="code">Código</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="code" formControlName="code">
+                        </div>
+                        <div class="mb-4">
+                            <label for="accommodation"
+                                class="block text-gray-700 text-sm font-bold mb-2">Alojamiento</label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                id="accommodation" formControlName="inside_enclosure">
+                                <option value="" selected>Seleccione una opción</option>
+                                <option value="true">Dentro del recinto</option>
+                                <option value="false">Fuera del recinto</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="license">Patente</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="license" type="text" formControlName="license_plate">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="owner">Propietario del
+                                vehículo</label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                id="owner" formControlName="vehicle_owner">
+                                <option selected>Seleccione</option>
+                                <option value="true">Sí</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observaciones</label>
+                            <textarea rows="4"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="obs" formControlName="observations"></textarea>
+                        </div>
 
-                    <p>
-                        <a [routerLink]="['/event']" class="color-accent">volver</a>
-                    </p>
+                        <div class="flex items-center justify-between">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                                type="submit" [disabled]="registrationForm.invalid || isProcessing()">Guardar</button>
+                            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                                [routerLink]="['/event/registrations']">Volver</a>
+                        </div>
 
-                    <button type="submit" [disabled]="registrationForm.invalid">Guardar</button>
-                </form>
+                    </form>
+                </div>
+
+                } @else {
+                <h1>Cargando...</h1>
+                }
+
             </div>
-
-            @if (selectedPerson()) {
-            <div class="person-info" style="flex-grow: 1;">
-                <p>Nombres: {{ selectedPerson()?.name }} {{ selectedPerson()?.middle_name }}</p>
-                <p>Apellidos: {{ selectedPerson()?.first_name }} {{ selectedPerson()?.last_name }}</p>
-                <p>Fecha de Nacimiento: {{ selectedPerson()?.birthday }}</p>
-                <p>Sexo: {{ selectedPerson()?.gender }}</p>
-                <p>Profesión u Oficio: {{ selectedPerson()?.profession }}</p>
-            </div>
-            }
-
-            } @else {
-            <h1>Cargando...</h1>
-            }
         </div>
+
+        <div
+            class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    Datos de la Persona
+                </h1>
+                <div class="space-y-4 md:space-y-6">
+                    @if (selectedPerson()) {
+                    <div class="person-info" style="flex-grow: 1;">
+                        <p><strong>RUT:</strong> {{ selectedPerson()?.rut }}</p>
+                        <p><strong>Nombres:</strong> {{ selectedPerson()?.name }} {{ selectedPerson()?.middle_name }}
+                        </p>
+                        <p><strong>Apellidos:</strong> {{ selectedPerson()?.first_name }} {{ selectedPerson()?.last_name
+                            }}</p>
+                        <p><strong>Fecha de Nacimiento:</strong> {{ selectedPerson()?.birthday }}</p>
+                        <p><strong>Email:</strong> {{ selectedPerson()?.email }}</p>
+                        <p><strong>Teléfono:</strong> {{ selectedPerson()?.phone }}</p>
+                        <p><strong>Dirección:</strong> {{ selectedPerson()?.address }}</p>
+                        <p><strong>Sexo:</strong> {{ selectedPerson()?.gender }}</p>
+                        <p><strong>Profesión u Oficio:</strong> {{ selectedPerson()?.profession }}</p>
+                        <p><strong>Patente vehículo:</strong> {{ selectedPerson()?.license_plate }}</p>
+                        <p><strong>Condición médica:</strong> {{ selectedPerson()?.medical_conditions }}</p>
+                        <p><strong>Localidad:</strong> {{ selectedPerson()?.locality_info?.display_name }}</p>
+                        <p><strong>Observaciones:</strong> {{ selectedPerson()?.observations }}</p>
+                    </div>
+
+                    @if (mode() == 'update') {
+                    <div>
+                        <button
+                            class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                            type="button" (click)="onDelete()">Eliminar Inscripción</button>
+                    </div>
+                    }
+                    } @else {
+                    <h1>Seleccione una persona</h1>
+                    }
+                </div>
+            </div>
+        </div>
+
     </div>
 </section>

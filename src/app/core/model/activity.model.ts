@@ -7,6 +7,7 @@ export interface Activity {
     // fh_start?: number;
     // fh_end?: number;
     position?: number;
+    registrationCount?: number;
     // registration_value?: number;
     // track_attendance?: boolean;
 }

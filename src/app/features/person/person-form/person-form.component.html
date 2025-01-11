@@ -1,89 +1,182 @@
-<section class="person person-section">
-    <div class="card">
-        @if (isLoaded()) {
-        <h1>
-            @let title = mode() == 'create' ? 'Crear' : 'Editar';
-            <span>{{ title }}</span> persona
-        </h1>
+<section class="bg-gray-50 py-6 dark:bg-gray-900">
+    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
 
-        <div class="person-form">
-            <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
+        <div
+            class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                    @let title = mode() == 'create' ? 'Nueva' : 'Editar';
+                    <span>{{ title }}</span> persona
+                </h1>
 
-                <p>
-                    <label for="">RUT</label>
-                    <input type="text" formControlName="rut">
-                </p>
-                <p>
-                    <label for="">Nombre</label>
-                    <input type="text" formControlName="name" required>
-                </p>
-                <p>
-                    <label for="">2do Nombre</label>
-                    <input type="text" formControlName="middle_name">
-                </p>
-                <p>
-                    <label for="">Apellido Paterno</label>
-                    <input type="text" formControlName="first_name" required>
-                </p>
-                <p>
-                    <label for="">Apellido Materno</label>
-                    <input type="text" formControlName="last_name">
-                </p>
-                <p>
-                    <label for="">Fecha de Nacimiento</label>
-                    <input type="date" formControlName="birthday">
-                </p>
-                <p>
-                    <label for="">Email</label>
-                    <input type="email" formControlName="email" email>
-                </p>
-                <p>
-                    <label for="">Teléfono</label>
-                    <input type="text" formControlName="phone">
-                </p>
-                <p>
-                    <label for="">Dirección</label>
-                    <input type="text" formControlName="address">
-                </p>
-                <p>
-                    <label for="">Sexo</label>
-                    <select formControlName="gender">
-                        <option value="">Seleccione un sexo</option>
-                        <option value="M">Masculino</option>
-                        <option value="F">Femenino</option>
-                    </select>
-                </p>
-                <p>
-                    <label for="">Profesión u Oficio</label>
-                    <input type="text" formControlName="profession">
-                </p>
-                <p>
-                    <label for="">Patente Vehículo</label>
-                    <input type="text" formControlName="license_plate">
-                </p>
-                <p>
-                    <label for="">Localidad</label>
-                    <select formControlName="locality_id">
-                        <option value="">Seleccione localidad</option>
-                        <option *ngFor="let locality of localities()" [value]="locality.id">
-                            {{ locality.display_name }}
-                        </option>
-                    </select>
-                </p>
-                <p>
-                    <label for="">Observaciones</label>
-                    <input type="text" formControlName="observations">
-                </p>
+                @if (isLoaded()) {
 
-                <p>
-                    <a [routerLink]="['/person']" class="color-accent">volver</a>
-                </p>
+                <div class="space-y-4 md:space-y-6">
+                    <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
 
-                <button type="submit" [disabled]="personForm.invalid">Guardar</button>
-            </form>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="rut">RUT</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': personForm.get('rut')?.invalid && personForm.get('rut')?.touched}"
+                                type="text" id="rut" formControlName="rut">
+
+                            @if (personForm.get('rut')?.hasError('invalidRutFormat') && personForm.get('rut')?.touched)
+                            {
+                            <div class="text-red-500 text-sm mt-1">
+                                El formato del RUT no es válido. Ejemplo: 12345678-9
+                            </div>
+                            }
+                            @if (personForm.get('rut')?.hasError('invalidRutDV') && personForm.get('rut')?.touched) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El RUT ingresado no es válido.
+                            </div>
+                            }
+
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre<span
+                                    class="text-red-500">*</span></label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': personForm.get('name')?.invalid && personForm.get('name')?.touched}"
+                                type="text" id="name" formControlName="name" required>
+                            @if (personForm.get('name')?.touched && personForm.get('name')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El nombre es obligatorio.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="mname">2do Nombre</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="mname" formControlName="middle_name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">Apellido
+                                Paterno<span class="text-red-500">*</span></label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': personForm.get('first_name')?.invalid && personForm.get('first_name')?.touched}"
+                                type="text" id="fname" formControlName="first_name" required>
+                            @if (personForm.get('first_name')?.touched && personForm.get('first_name')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El apellido paterno es obligatorio.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Apellido
+                                Materno</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="lname" formControlName="last_name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="birthday">Fecha de
+                                Nacimiento</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="date" id="birthday" formControlName="birthday">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                [ngClass]="{'border-red-500': personForm.get('email')?.invalid && personForm.get('email')?.touched}"
+                                type="email" id="email" formControlName="email" email>
+                            @if (personForm.get('email')?.touched && personForm.get('email')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                El email ingresado no es válido.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Teléfono</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="phone" formControlName="phone">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="address">Dirección</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="address" formControlName="address">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Sexo</label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                id="gender" formControlName="gender">
+                                <option value="">Seleccione un sexo</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profession">Profesión u
+                                Oficio</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="profession" formControlName="profession">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="license">Patente
+                                Vehículo</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="license" formControlName="license_plate">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="medical">Condición
+                                médica</label>
+                            <input
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                type="text" id="medical" formControlName="medical_conditions">
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
+                                    class="text-red-500">*</span></label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                [ngClass]="{'border-red-500': personForm.get('locality_id')?.invalid && personForm.get('locality_id')?.touched}"
+                                id="locality" formControlName="locality_id" required>
+                                <option value="">Seleccione una localidad</option>
+                                @for (locality of localities(); track $index) {
+                                <option [value]="locality.id">
+                                    {{ locality.display_name }}
+                                </option>
+                                }
+                            </select>
+                            @if (personForm.get('locality_id')?.touched && personForm.get('locality_id')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                Debe seleccionar una localidad.
+                            </div>
+                            }
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observaciones</label>
+                            <textarea rows="4"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                id="obs" formControlName="observations"></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <button
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                                type="submit" [disabled]="personForm.invalid || isProcessing()">Guardar</button>
+                            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                                [routerLink]="['/person']">Volver</a>
+                        </div>
+
+                    </form>
+                </div>
+                } @else {
+                <h1>Cargando...</h1>
+                }
+
+            </div>
         </div>
-        } @else {
-        <h1>Cargando...</h1>
-        }
     </div>
 </section>

@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
     selector: 'app-attendance-by-code',
     templateUrl: './attendance-by-code.component.html',
+    standalone: true,
     imports: [
         FormsModule
     ]

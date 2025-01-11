@@ -6,25 +6,29 @@ import {
   FormBuilder,
   ReactiveFormsModule,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { AsyncPipe } from '@angular/common';
+import { Store } from '@ngrx/store';
 
-import { AuthService } from '../auth.service';
+import { appFeature } from '../../store/app.state';
+import { appActions } from '../../store/app.actions';
 
 @Component({
-    selector: 'app-login',
-    templateUrl: './login.component.html',
-    imports: [RouterLink, ReactiveFormsModule]
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule, AsyncPipe],
 })
 export class LoginComponent {
   fb = inject(FormBuilder);
-  router = inject(Router);
-  authSrv = inject(AuthService);
+  store = inject(Store);
+
+  isProcessing$ = this.store.select(appFeature.selectIsProcessing);
 
   readonly loginForm = new FormGroup({
-    email: new FormControl('gerson.eaa@gmail.com', {
+    email: new FormControl('', {
       validators: [Validators.required, Validators.email],
     }),
-    password: new FormControl('123asd1', {
+    password: new FormControl('', {
       validators: [Validators.required],
     }),
   });
@@ -33,14 +37,8 @@ export class LoginComponent {
 
   onSubmit() {
     const { email, password } = this.loginForm.value;
-    this.authSrv.login(email!, password!).subscribe({
-      next: () => {
-        this.router.navigateByUrl('/');
-      },
-      error: (err) => {
-        this.errorMsg = err.code;
-        console.log(err);
-      },
-    });
+    if (email && password) {
+      this.store.dispatch(appActions.login({ email, password }));
+    }
   }
 }

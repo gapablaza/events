@@ -1,5 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
   ColDef,
@@ -8,38 +9,54 @@ import {
   GridReadyEvent,
 } from 'ag-grid-community'; // Column Definition Type Interface
 
-import { EventService, LocalityService } from '../../../core/service';
-import { Activity, Locality, Registration } from '../../../core/model';
+import { Registration } from '../../../core/model';
+import { appFeature } from '../../../store/app.state';
+import { eventFeature } from '../store/event.state';
+import { EventRegistrationButtonComponent } from './event-registrations-button.component';
 
 @Component({
   selector: 'app-event-import',
   template: `
-    <p>
-      Inscritos
-      <a routerLink="add">+ Agregar</a>
-    </p>
+    <div class="px-8 mb-6">
+      <h1
+        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
+      >
+        Listado de inscritos
+      </h1>
+      <a
+        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+        routerLink="add"
+        >+ Agregar</a
+      >
+    </div>
     <ag-grid-angular
       style="width: 100%; height: 500px;"
       class="ag-theme-quartz"
-      [rowData]="registrations"
+      [rowData]="registrations()"
       [columnDefs]="colDefs"
       [pagination]="true"
       (gridReady)="onGridReady($event)"
     />
   `,
+  standalone: true,
   imports: [AgGridAngular, RouterLink],
 })
 export class EventRegistrationsComponent implements OnInit {
   private _gridApi!: GridApi<Registration>;
+  private store = inject(Store);
 
-  private _eventSrv = inject(EventService);
-  private _localitySrv = inject(LocalityService);
-
-  registrations: Registration[] = [];
-  localities = signal<Locality[]>([]);
-  activities = signal<Activity[]>([]);
+  localities = this.store.selectSignal(appFeature.selectLocalities);
+  registrations = this.store.selectSignal(eventFeature.selectRegistrations);
+  activities = this.store.selectSignal(eventFeature.selectActivities);
 
   colDefs: (ColDef | ColGroupDef)[] = [
+    {
+      field: 'actions',
+      headerName: 'Acciones',
+      width: 100,
+      pinned: 'left',
+      cellRenderer: EventRegistrationButtonComponent,
+    },
     {
       headerName: 'Localidad - Sector',
       valueGetter: (r) =>
@@ -60,26 +77,30 @@ export class EventRegistrationsComponent implements OnInit {
       filter: true,
     },
     {
+      headerName: 'F. Nacimiento',
+      field: 'person_info.birthday',
+      filter: true,
+    },
+    {
       headerName: 'Edad',
-      valueFormatter: (r) => {
+      width: 100,
+      cellClass: 'text-right',
+      valueGetter: (r) => {
         if (r.data.person_info.birthday) {
           const age = this.calculateAge(r.data.person_info.birthday);
-          return `${age} años (${r.data.person_info.birthday})`;
+          return age < 10 ? `0${age}` : `${age}`;
         } else {
           return '';
         }
       },
-      filter: true,
+      filter: 'agNumberColumnFilter',
     },
   ];
 
   onGridReady(params: GridReadyEvent) {
     this._gridApi = params.api;
 
-    this._eventSrv.registrations().subscribe((registrations) => {
-      this.registrations = registrations;
-      console.log(registrations);
-    });
+    this.initializeColumns();
   }
 
   calculateAge(birthday: string): number {
@@ -94,84 +115,104 @@ export class EventRegistrationsComponent implements OnInit {
       : age - 1;
   }
 
-  ngOnInit(): void {
-    this._localitySrv.list().subscribe((localities) => {
-      this.localities.set(localities);
-      console.log(this.localities());
+  initializeColumns(): void {
+    let tempColDef: (ColDef | ColGroupDef)[] = [];
+
+    this.activities().forEach((activity) => {
+      tempColDef.push({
+        valueGetter: (r) =>
+          r.data.activities_registered.includes(activity.id) ? 1 : 0,
+        headerName: activity.short_name,
+        width: 100,
+        filter: true,
+      });
     });
 
-    this._eventSrv.activities().subscribe((activities) => {
-      let tempColDef: (ColDef | ColGroupDef)[] = [];
-
-      activities.forEach((activity) => {
-        tempColDef.push({
-          valueGetter: (r) =>
-            r.data.activities_registered.includes(activity.id) ? 1 : 0,
-          headerName: activity.short_name,
-          width: 100,
-          filter: true,
-        });
-      });
-
-      this.colDefs.push({
-        headerName: 'Actividades',
-        children: tempColDef,
-      });
-
-      this.colDefs.push(
-        {
-          headerName: 'Días',
-          valueGetter: (r) => r.data.activities_registered.length,
-          width: 100,
-          filter: true,
-        },
-        {
-          field: 'total_cost',
-          headerName: 'Monto Total',
-          valueFormatter: (r) =>
-            (r.data.total_cost || 0).toLocaleString('es-CL', {
-              style: 'currency',
-              currency: 'CLP',
-            }),
-          filter: true,
-        },
-        { field: 'code', headerName: 'Código', filter: true },
-        {
-          field: 'person_info.gender',
-          headerName: 'Sexo',
-          width: 100,
-          filter: true,
-        },
-        {
-          field: 'requires_accommodation',
-          headerName: 'Dentro del recinto',
-          valueFormatter: (r) => (r.data.requires_accommodation ? 'Si' : 'No'),
-          filter: true,
-        },
-        {
-          field: 'license_plate',
-          headerName: 'Patente Vehículo',
-          filter: true,
-        },
-        {
-          field: 'vehicle_owner',
-          headerName: 'Dueño del Vehículo',
-          valueFormatter: (r) => (r.data.vehicle_owner ? 'Si' : 'No'),
-          filter: true,
-        },
-        { field: 'xxx', headerName: 'Patologías', filter: true },
-        {
-          field: 'person_info.profession',
-          headerName: 'Profesión u Oficio',
-          filter: true,
-        },
-        { field: 'observations', headerName: 'Observaciones', filter: true }
-      );
-
-      this._gridApi.setGridOption('columnDefs', this.colDefs);
-
-      this.activities.set(activities);
-      console.log(this.activities());
+    this.colDefs.push({
+      headerName: 'Actividades',
+      children: tempColDef,
     });
+
+    this.colDefs.push(
+      {
+        headerName: 'Ctdad.',
+        valueGetter: (r) => r.data.activities_registered.length,
+        width: 100,
+        filter: 'agNumberColumnFilter',
+      },
+      {
+        field: 'total_cost',
+        headerName: 'Monto Total',
+        cellClass: 'text-right',
+        // valueFormatter: (r) =>
+        //   (r.data.total_cost || 0).toLocaleString('es-CL', {
+        //     style: 'currency',
+        //     currency: 'CLP',
+        //   }),
+        filter: 'agNumberColumnFilter',
+      },
+      {
+        field: 'total_paid',
+        headerName: 'Monto Pagado',
+        cellClass: 'text-right',
+        // valueFormatter: (r) =>
+        //   (r.data.total_cost || 0).toLocaleString('es-CL', {
+        //     style: 'currency',
+        //     currency: 'CLP',
+        //   }),
+        filter: 'agNumberColumnFilter',
+      },
+      { field: 'code', headerName: 'Código', filter: true },
+      {
+        field: 'person_info.gender',
+        headerName: 'Sexo',
+        width: 100,
+        filter: true,
+      },
+      {
+        field: 'inside_enclosure',
+        headerName: 'Dentro del recinto',
+        cellDataType: 'boolean',
+        // valueGetter: (r) => (r.data.inside_enclosure && r.data.inside_enclosure === 'true' ? 'Si' : 'No'),
+        filter: true,
+      },
+      {
+        field: 'license_plate',
+        headerName: 'Patente Vehículo',
+        filter: true,
+      },
+      {
+        field: 'vehicle_owner',
+        headerName: 'Dueño del Vehículo',
+        cellDataType: 'boolean',
+        // valueGetter: (r) => (r.data.vehicle_owner && r.data.vehicle_owner === 'true' ? 'Si' : 'No'),
+        filter: true,
+      },
+      {
+        field: 'medical_conditions',
+        headerName: 'Condición médica',
+        filter: true,
+      },
+      {
+        field: 'person_info.profession',
+        headerName: 'Profesión u Oficio',
+        filter: true,
+      },
+      {
+        field: 'person_info.email',
+        headerName: 'Email',
+        filter: true,
+      },
+      {
+        field: 'person_info.phone',
+        headerName: 'Teléfono',
+        filter: true,
+      },
+      { field: 'observations', headerName: 'Observaciones', filter: true }
+    );
+
+    this._gridApi.setGridOption('columnDefs', this.colDefs);
   }
+
+  ngOnInit(): void {}
 }
