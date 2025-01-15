@@ -19,7 +19,7 @@ export class ImportPersonsComponent implements OnInit {
     console.log('ImportPersonsComponent');
 
     let mapped = this.records.map((person: any) => {
-    //   this.savePerson(person);
+      this.savePerson(person);
     });
 
     console.log(mapped);

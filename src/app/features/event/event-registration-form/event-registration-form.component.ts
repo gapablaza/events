@@ -193,7 +193,6 @@ export class EventRegistrationFormComponent implements OnInit {
   }
 
   onSelectPerson(personId: string) {
-    console.log(personId);
     const person = this.persons().find((p) => p.id === personId);
 
     // si se encuentra a la persona
@@ -228,7 +227,6 @@ export class EventRegistrationFormComponent implements OnInit {
   }
 
   onSelectLocality(localityId: string) {
-    console.log(localityId);
     const locality = this.localities().find((l) => l.id === localityId);
     if (locality) {
       this.selectedLocality.set(locality);

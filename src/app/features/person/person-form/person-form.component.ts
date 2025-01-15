@@ -66,8 +66,6 @@ export class PersonFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    console.log(this.person());
-
     if (this.person()) {
       this.mode.set('update');
       this.personForm.patchValue(this.person() as Person);

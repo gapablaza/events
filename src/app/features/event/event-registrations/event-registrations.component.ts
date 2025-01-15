@@ -67,13 +67,13 @@ export class EventRegistrationsComponent implements OnInit {
     {
       headerName: 'Nombres',
       valueGetter: (r) =>
-        `${r.data.person_info.name} ${r.data.person_info.middle_name}`,
+        `${r.data.person_info.name} ${r.data.person_info.middle_name || ''}`,
       filter: true,
     },
     {
       headerName: 'Apellidos',
       valueGetter: (r) =>
-        `${r.data.person_info.first_name} ${r.data.person_info.last_name}`,
+        `${r.data.person_info.first_name} ${r.data.person_info.last_name || ''}`,
       filter: true,
     },
     {
@@ -189,7 +189,7 @@ export class EventRegistrationsComponent implements OnInit {
         filter: true,
       },
       {
-        field: 'medical_conditions',
+        field: 'person_info.medical_conditions',
         headerName: 'Condición médica',
         filter: true,
       },

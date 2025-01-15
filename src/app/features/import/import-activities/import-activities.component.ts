@@ -20,7 +20,7 @@ export class ImportActivitiesComponent implements OnInit {
     console.log('ImportActivitiesComponent');
 
     let mapped = this.records.map((activity: Activity) => {
-      // this.saveActivity(activity);
+      this.saveActivity(activity);
     });
 
     console.log(mapped);

@@ -20,7 +20,7 @@ export class ImportLocalitiesComponent implements OnInit {
     console.log('ImportLocalitiesComponent');
 
     let mapped = this.records.map((locality: Locality) => {
-      // this.saveLocality(locality);
+      this.saveLocality(locality);
     });
 
     console.log(mapped);

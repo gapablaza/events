@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "events-77388",
+    "prod": "events-prod-b6660"
+  },
+  "targets": {},
+  "etags": {}
+}

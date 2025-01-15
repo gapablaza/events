@@ -69,23 +69,24 @@ export class ImportRegistrationsComponent {
 
   private async addPersonAndRegisterInEvent(record: any) {
     try {
+      console.log(record);
       // Agregar persona a la colección "person"
       const personRef = collection(this.firestore, this.PERSON_PATH);
       const locality = this.localities().find((locality) => locality.id === record.locality_id) || null;
       const personData = {
-        rut: record.rut || null,
-        name: record.name || null,
-        middle_name: record.middle_name || null,
-        first_name: record.first_name || null,
-        last_name: record.last_name || null,        
-        birthday: record.birthday || null,
-        email: record.email || null,
-        phone: record.phone ? '' + record.phone : null,
-        address: record.address || null,
-        gender: record.gender || null,
-        profession: record.profession || null,
-        license_plate: record.license_plate_p || null,
-        medical_conditions: record.medical_conditions || null,
+        rut: record.rut ? record.rut.trim() : null,
+        name: record.name ? record.name.trim() : null,
+        middle_name: record.middle_name ? record.middle_name.trim() : null,
+        first_name: record.first_name ? record.first_name.trim() : null,
+        last_name: record.last_name ? record.last_name.trim() : null,
+        birthday: record.birthday ? record.birthday.trim() : null,
+        email: record.email ? record.email.trim() : null,
+        phone: record.phone ? ('' + record.phone).trim() : null,
+        address: record.address ? record.address.trim() : null,
+        gender: record.gender ? record.gender.trim() : null,
+        profession: record.profession ? record.profession.trim() : null,
+        license_plate: record.license_plate_p ? record.license_plate_p.trim() : null,
+        medical_conditions: record.medical_conditions ? record.medical_conditions.trim() : null,
         locality_id: record.locality_id || null,
         locality_info: locality,
         observations: 'CARGA MASIVA Inscripción Rucacura 2025',
@@ -100,11 +101,11 @@ export class ImportRegistrationsComponent {
       const registrationData = {
         totalCost: record.total_cost ? record.total_cost * 1 : 0,
         totalPaid: record.total_paid ? record.total_paid * 1 : 0,
-        code: record.code || null,
+        code: record.code ? record.code.trim() : null,
         insideEnclosure: record.inside_enclosure == 1 ? true : (record.inside_enclosure == 0 ? false : undefined),
-        licensePlate: record.license_plate_r || null,
+        licensePlate: record.license_plate_r ? record.license_plate_r.trim() : null,
         vehicleOwner: record.vehicle_owner == 1 ? true : (record.vehicle_owner == 0 ? false : undefined),
-        observations: record.observations || null,
+        observations: record.observations ? record.observations.trim() : null,
       };
       let activities: string[] = [];
       if (record.lu && Number(record.lu) === 1) activities.push('lunes');
