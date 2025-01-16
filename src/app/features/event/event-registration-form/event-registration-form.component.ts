@@ -97,7 +97,13 @@ export class EventRegistrationFormComponent implements OnInit {
 
       // TO DO: cambiar por autocompletado
       this.personSrv.list().subscribe((persons) => {
-        this.persons.set(persons.sort((a, b) => a.name.localeCompare(b.name)));
+        this.persons.set(
+          persons.sort((a, b) =>
+            (a.name + ' ' + a.first_name).localeCompare(
+              b.name + ' ' + b.first_name
+            )
+          )
+        );
 
         // si se modifica la persona seleccionada de manera externa, se actualiza la de acá
         if (this.selectedPerson()) {

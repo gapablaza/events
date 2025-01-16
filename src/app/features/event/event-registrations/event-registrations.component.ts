@@ -16,28 +16,7 @@ import { EventRegistrationButtonComponent } from './event-registrations-button.c
 
 @Component({
   selector: 'app-event-import',
-  template: `
-    <div class="px-8 mb-6">
-      <h1
-        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white"
-      >
-        Listado de inscritos
-      </h1>
-      <a
-        class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-        routerLink="add"
-        >+ Agregar</a
-      >
-    </div>
-    <ag-grid-angular
-      style="width: 100%; height: 500px;"
-      class="ag-theme-quartz"
-      [rowData]="registrations()"
-      [columnDefs]="colDefs"
-      [pagination]="true"
-      (gridReady)="onGridReady($event)"
-    />
-  `,
+  templateUrl: './event-registrations.component.html',
   standalone: true,
   imports: [AgGridAngular, RouterLink],
 })
@@ -73,7 +52,9 @@ export class EventRegistrationsComponent implements OnInit {
     {
       headerName: 'Apellidos',
       valueGetter: (r) =>
-        `${r.data.person_info.first_name} ${r.data.person_info.last_name || ''}`,
+        `${r.data.person_info.first_name} ${
+          r.data.person_info.last_name || ''
+        }`,
       filter: true,
     },
     {
@@ -162,6 +143,13 @@ export class EventRegistrationsComponent implements OnInit {
         //   }),
         filter: 'agNumberColumnFilter',
       },
+      {
+        headerName: 'Diferencia',
+        cellClass: 'text-right',
+        valueGetter: (r) =>
+          (r.data.total_cost || 0) - (r.data.total_paid || 0),
+        filter: 'agNumberColumnFilter',
+      },
       { field: 'code', headerName: 'Código', filter: true },
       {
         field: 'person_info.gender',
@@ -215,4 +203,8 @@ export class EventRegistrationsComponent implements OnInit {
   }
 
   ngOnInit(): void {}
+
+  exportToCsv() {
+    this._gridApi.exportDataAsCsv();
+  }
 }
