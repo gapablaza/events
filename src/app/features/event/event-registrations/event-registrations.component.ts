@@ -8,6 +8,7 @@ import {
   GridApi,
   GridReadyEvent,
 } from 'ag-grid-community'; // Column Definition Type Interface
+import { AG_GRID_LOCALE_ES } from '@ag-grid-community/locale';
 
 import { Registration } from '../../../core/model';
 import { appFeature } from '../../../store/app.state';
@@ -24,6 +25,7 @@ export class EventRegistrationsComponent implements OnInit {
   private _gridApi!: GridApi<Registration>;
   private store = inject(Store);
 
+  locale_text = AG_GRID_LOCALE_ES;
   localities = this.store.selectSignal(appFeature.selectLocalities);
   registrations = this.store.selectSignal(eventFeature.selectRegistrations);
   activities = this.store.selectSignal(eventFeature.selectActivities);

@@ -13,7 +13,26 @@
 
                 <div class="space-y-4 md:space-y-6">
                     <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
-
+                        <div class="mb-4">
+                            <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
+                                    class="text-red-500">*</span></label>
+                            <select
+                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                [ngClass]="{'border-red-500': personForm.get('locality_id')?.invalid && personForm.get('locality_id')?.touched}"
+                                id="locality" formControlName="locality_id" required>
+                                <option value="">Seleccione una localidad</option>
+                                @for (locality of localities(); track $index) {
+                                <option [value]="locality.id">
+                                    {{ locality.display_name }}
+                                </option>
+                                }
+                            </select>
+                            @if (personForm.get('locality_id')?.touched && personForm.get('locality_id')?.invalid) {
+                            <div class="text-red-500 text-sm mt-1">
+                                Debe seleccionar una localidad.
+                            </div>
+                            }
+                        </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="rut">RUT</label>
                             <input
@@ -32,7 +51,6 @@
                                 El RUT ingresado no es válido.
                             </div>
                             }
-
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre<span
@@ -134,26 +152,6 @@
                             <input
                                 class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                 type="text" id="medical" formControlName="medical_conditions">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
-                                    class="text-red-500">*</span></label>
-                            <select
-                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                [ngClass]="{'border-red-500': personForm.get('locality_id')?.invalid && personForm.get('locality_id')?.touched}"
-                                id="locality" formControlName="locality_id" required>
-                                <option value="">Seleccione una localidad</option>
-                                @for (locality of localities(); track $index) {
-                                <option [value]="locality.id">
-                                    {{ locality.display_name }}
-                                </option>
-                                }
-                            </select>
-                            @if (personForm.get('locality_id')?.touched && personForm.get('locality_id')?.invalid) {
-                            <div class="text-red-500 text-sm mt-1">
-                                Debe seleccionar una localidad.
-                            </div>
-                            }
                         </div>
                         <div class="mb-4">
                             <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observaciones</label>

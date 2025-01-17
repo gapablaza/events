@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef, GridReadyEvent } from 'ag-grid-community'; // Column Definition Type Interface
+import { AG_GRID_LOCALE_ES } from '@ag-grid-community/locale';
 
 import { PersonListButtonComponent } from './person-list-button.component';
 import { appFeature } from '../../../store/app.state';
@@ -17,6 +18,7 @@ import { personFeature } from '../store/person.state';
 export class PersonListComponent {
   private store = inject(Store);
 
+  locale_text = AG_GRID_LOCALE_ES;
   localities = this.store.selectSignal(appFeature.selectLocalities);
   persons = this.store.selectSignal(personFeature.selectPersons);
 
