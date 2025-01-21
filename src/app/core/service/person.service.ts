@@ -6,6 +6,7 @@ import {
   doc,
   docData,
   Firestore,
+  getDoc,
   getDocs,
   limit,
   or,
@@ -107,6 +108,11 @@ export class PersonService {
 
   async update(person: Person): Promise<void> {
     const refPersons = collection(this._firestore, 'person');
+    // TO DO: Buscar eventos "activos", y que no esté fijo el ID del evento
+    const refRegistrations = doc(
+      this._firestore,
+      `event/rucacura-2025/registrations/${person.id}`
+    );
 
     // Validar si el RUT está presente y es único
     if (person.rut) {
@@ -129,5 +135,17 @@ export class PersonService {
       ...person,
       updated_at: Timestamp.now(),
     });
+
+    // Si la persona está registrada en el evento, actualizamos sus datos
+    const existingRegistrationSnapshot = await getDoc(refRegistrations);
+    if (existingRegistrationSnapshot.exists()) {
+      // Actualizamos los datos de la persona en el evento
+      await updateDoc(refRegistrations, {
+        person_info: {
+          ...person,
+        },
+        updated_at: Timestamp.now(),
+      });
+    }
   }
 }
