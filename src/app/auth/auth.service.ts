@@ -14,6 +14,7 @@ import { AuthUser } from '../core/model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+
   private auth = inject(Auth);
 
   register(email: string, password: string): Observable<void> {
@@ -68,14 +69,18 @@ export class AuthService {
 
   authState(): Observable<AuthUser | null> {
     return authState(this.auth).pipe(
-      map((firebaseUser: User) => {
-        const appUser: AuthUser = {
-          uid: firebaseUser.uid,
-          displayName: firebaseUser.displayName!,
-          email: firebaseUser.email!,
-          photoURL: firebaseUser.photoURL ?? undefined,
-        };
-        return appUser;
+      map((firebaseUser) => {
+        if (!firebaseUser) {
+          return null;
+        } else {
+          const appUser: AuthUser = {
+            uid: firebaseUser.uid,
+            displayName: firebaseUser.displayName!,
+            email: firebaseUser.email!,
+            photoURL: firebaseUser.photoURL ?? undefined,
+          };
+          return appUser;
+        }
       })
     );
   }
