@@ -6,10 +6,9 @@ import { EventService } from '../../../core/service';
 import { AttendanceListComponent } from '../../attendance/attendance-list/attendance-list.component';
 
 @Component({
-  selector: 'app-event-activity',
-  templateUrl: './event-activity.component.html',
-  standalone: true,
-  imports: [AttendanceListComponent],
+    selector: 'app-event-activity',
+    templateUrl: './event-activity.component.html',
+    imports: [AttendanceListComponent]
 })
 export class EventActivityComponent implements OnInit {
   private _route = inject(ActivatedRoute);

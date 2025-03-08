@@ -16,10 +16,9 @@ import { eventFeature } from '../store/event.state';
 import { EventRegistrationButtonComponent } from './event-registrations-button.component';
 
 @Component({
-  selector: 'app-event-import',
-  templateUrl: './event-registrations.component.html',
-  standalone: true,
-  imports: [AgGridAngular, RouterLink],
+    selector: 'app-event-import',
+    templateUrl: './event-registrations.component.html',
+    imports: [AgGridAngular, RouterLink]
 })
 export class EventRegistrationsComponent implements OnInit {
   private _gridApi!: GridApi<Registration>;

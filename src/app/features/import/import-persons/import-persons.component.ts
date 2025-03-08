@@ -4,10 +4,9 @@ import { doc, Firestore, setDoc, Timestamp } from '@angular/fire/firestore';
 import person_data from './person.data';
 
 @Component({
-  selector: 'app-import-persons',
-  template: '',
-  standalone: true,
-  imports: [],
+    selector: 'app-import-persons',
+    template: '',
+    imports: []
 })
 export class ImportPersonsComponent implements OnInit {
   private _firestore = inject(Firestore);

@@ -18,10 +18,9 @@ import { personActions } from '../store/person.actions';
 import { personFeature } from '../store/person.state';
 
 @Component({
-  selector: 'person-form',
-  templateUrl: './person-form.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgClass],
+    selector: 'person-form',
+    templateUrl: './person-form.component.html',
+    imports: [ReactiveFormsModule, RouterLink, NgClass]
 })
 export class PersonFormComponent implements OnInit {
   fb = inject(FormBuilder);

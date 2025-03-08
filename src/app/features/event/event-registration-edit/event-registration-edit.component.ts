@@ -5,10 +5,9 @@ import { EventRegistrationFormComponent } from '../event-registration-form/event
 import { eventFeature } from '../store/event.state';
 
 @Component({
-  selector: 'app-event-registration-edit',
-  templateUrl: './event-registration-edit.component.html',
-  standalone: true,
-  imports: [EventRegistrationFormComponent],
+    selector: 'app-event-registration-edit',
+    templateUrl: './event-registration-edit.component.html',
+    imports: [EventRegistrationFormComponent]
 })
 export class EventRegistrationEditComponent {
   store = inject(Store);

@@ -4,10 +4,9 @@ import { LocalityService } from '../../../core/service';
 import { Locality } from '../../../core/model';
 
 @Component({
-  selector: 'app-locality-list',
-  templateUrl: './locality-list.component.html',
-  standalone: true,
-  imports: [],
+    selector: 'app-locality-list',
+    templateUrl: './locality-list.component.html',
+    imports: []
 })
 export class LocalityListComponent implements OnInit {
   localities: Locality[] = [];

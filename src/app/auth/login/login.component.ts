@@ -13,10 +13,9 @@ import { appFeature } from '../../store/app.state';
 import { appActions } from '../../store/app.actions';
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, AsyncPipe],
+    selector: 'app-login',
+    templateUrl: './login.component.html',
+    imports: [ReactiveFormsModule, AsyncPipe]
 })
 export class LoginComponent {
   fb = inject(FormBuilder);

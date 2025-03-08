@@ -5,10 +5,9 @@ import { Store } from '@ngrx/store';
 import { eventFeature } from '../store/event.state';
 
 @Component({
-  selector: 'app-event-profile',
-  templateUrl: './event-profile.component.html',
-  standalone: true,
-  imports: [RouterLink],
+    selector: 'app-event-profile',
+    templateUrl: './event-profile.component.html',
+    imports: [RouterLink]
 })
 export class EventProfileComponent {
   private store = inject(Store);

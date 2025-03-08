@@ -5,10 +5,9 @@ import { Activity } from '../../../core/model';
 import activity_data from './activities.data';
 
 @Component({
-  selector: 'app-import-activities',
-  template: '',
-  standalone: true,
-  imports: [],
+    selector: 'app-import-activities',
+    template: '',
+    imports: []
 })
 export class ImportActivitiesComponent implements OnInit {
   private _firestore = inject(Firestore);

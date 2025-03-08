@@ -5,10 +5,9 @@ import { Store } from '@ngrx/store';
 import { eventActions } from './store/event.actions';
 
 @Component({
-  selector: 'app-event',
-  template: `<router-outlet></router-outlet>`,
-  standalone: true,
-  imports: [RouterOutlet],
+    selector: 'app-event',
+    template: `<router-outlet></router-outlet>`,
+    imports: [RouterOutlet]
 })
 export class EventComponent implements OnInit, OnDestroy {
   store = inject(Store);

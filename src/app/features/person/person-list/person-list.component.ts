@@ -10,10 +10,9 @@ import { appFeature } from '../../../store/app.state';
 import { personFeature } from '../store/person.state';
 
 @Component({
-  selector: 'app-person-list',
-  templateUrl: './person-list.component.html',
-  standalone: true,
-  imports: [AgGridAngular, RouterLink],
+    selector: 'app-person-list',
+    templateUrl: './person-list.component.html',
+    imports: [AgGridAngular, RouterLink]
 })
 export class PersonListComponent {
   private store = inject(Store);

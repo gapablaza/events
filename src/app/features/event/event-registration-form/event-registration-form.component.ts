@@ -18,10 +18,9 @@ import { eventFeature } from '../store/event.state';
 import { eventActions } from '../store/event.actions';
 
 @Component({
-  selector: 'app-event-registration-form',
-  templateUrl: './event-registration-form.component.html',
-  standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, NgClass],
+    selector: 'app-event-registration-form',
+    templateUrl: './event-registration-form.component.html',
+    imports: [ReactiveFormsModule, RouterLink, NgClass]
 })
 export class EventRegistrationFormComponent implements OnInit {
   private store = inject(Store);

@@ -6,10 +6,9 @@ import { personFeature } from './store/person.state';
 import { personActions } from './store/person.actions';
 
 @Component({
-  selector: 'app-person',
-  template: `<router-outlet></router-outlet>`,
-  standalone: true,
-  imports: [RouterOutlet],
+    selector: 'app-person',
+    template: `<router-outlet></router-outlet>`,
+    imports: [RouterOutlet]
 })
 export class PersonComponent implements OnInit, OnDestroy {
   store = inject(Store);

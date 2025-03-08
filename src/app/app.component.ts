@@ -7,11 +7,10 @@ import { appFeature } from './store/app.state';
 import { appActions } from './store/app.actions';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
-  standalone: true,
-  imports: [RouterOutlet, RouterLink],
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrl: './app.component.scss',
+    imports: [RouterOutlet, RouterLink]
 })
 export class AppComponent implements OnInit {
   store = inject(Store);

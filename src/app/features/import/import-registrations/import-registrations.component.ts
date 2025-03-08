@@ -9,10 +9,9 @@ import { EventService } from '../../../core/service';
 export type PersonCreate = Omit<Person, 'id'>;
 
 @Component({
-  selector: 'app-import-person',
-  templateUrl: './import-registrations.component.html',
-  standalone: true,
-  imports: []
+    selector: 'app-import-person',
+    templateUrl: './import-registrations.component.html',
+    imports: []
 })
 export class ImportRegistrationsComponent {
   firestore = inject(Firestore);

@@ -5,10 +5,9 @@ import { Person } from '../../../core/model';
 import { PersonFormComponent } from "../person-form/person-form.component";
 
 @Component({
-  selector: 'app-person-edit',
-  templateUrl: './person-edit.component.html',
-  standalone: true,
-  imports: [PersonFormComponent],
+    selector: 'app-person-edit',
+    templateUrl: './person-edit.component.html',
+    imports: [PersonFormComponent]
 })
 export class PersonEditComponent {
   personSrv = inject(PersonService);

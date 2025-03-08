@@ -4,9 +4,8 @@ import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
 
 @Component({
-  selector: 'app-event-registrations-button',
-  standalone: true,
-  template: `
+    selector: 'app-event-registrations-button',
+    template: `
     <button
       class="bg-grey-500 hover:bg-grey-700 text-black px-2 rounded focus:outline-none focus:shadow-outline"
       (click)="buttonClicked()"
@@ -14,7 +13,7 @@ import { ICellRendererParams } from 'ag-grid-community';
       Editar
     </button>
   `,
-  imports: [],
+    imports: []
 })
 export class EventRegistrationButtonComponent
   implements ICellRendererAngularComp
