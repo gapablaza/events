@@ -1,180 +1,199 @@
-<section class="bg-gray-50 py-6 dark:bg-gray-900">
-    <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
+@let title = mode() == 'create' ? 'Nueva' : 'Editar';
+@if (view() == 'modal') {
+<h2 mat-dialog-title><span>{{ title }}</span> persona</h2>
+}
+<mat-dialog-content class="mat-typography">
+    <section class="bg-gray-50 py-6 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">
 
-        <div
-            class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-                <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                    @let title = mode() == 'create' ? 'Nueva' : 'Editar';
-                    <span>{{ title }}</span> persona
-                </h1>
+            <div
+                class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                    @if (view() == 'page') {
+                    <h1
+                        class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                        <span>{{ title }}</span> persona
+                    </h1>
+                    }
 
-                @if (isLoaded()) {
+                    @if (isLoaded()) {
 
-                <div class="space-y-4 md:space-y-6">
-                    <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
-                                    class="text-red-500">*</span></label>
-                            <select
-                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                [ngClass]="{'border-red-500': personForm.get('locality_id')?.invalid && personForm.get('locality_id')?.touched}"
-                                id="locality" formControlName="locality_id" required>
-                                <option value="">Seleccione una localidad</option>
-                                @for (locality of localities(); track $index) {
-                                <option [value]="locality.id">
-                                    {{ locality.display_name }}
-                                </option>
+                    <div class="space-y-4 md:space-y-6">
+                        <form [formGroup]="personForm" (ngSubmit)="personForm.valid && onSubmit()">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="locality">Localidad<span
+                                        class="text-red-500">*</span></label>
+                                <select
+                                    class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    [ngClass]="{'border-red-500': personForm.get('locality_id')?.invalid && personForm.get('locality_id')?.touched}"
+                                    id="locality" formControlName="locality_id" required>
+                                    <option value="">Seleccione una localidad</option>
+                                    @for (locality of localities(); track $index) {
+                                    <option [value]="locality.id">
+                                        {{ locality.display_name }}
+                                    </option>
+                                    }
+                                </select>
+                                @if (personForm.get('locality_id')?.touched && personForm.get('locality_id')?.invalid) {
+                                <div class="text-red-500 text-sm mt-1">
+                                    Debe seleccionar una localidad.
+                                </div>
                                 }
-                            </select>
-                            @if (personForm.get('locality_id')?.touched && personForm.get('locality_id')?.invalid) {
-                            <div class="text-red-500 text-sm mt-1">
-                                Debe seleccionar una localidad.
                             </div>
-                            }
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="rut">RUT</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                [ngClass]="{'border-red-500': personForm.get('rut')?.invalid && personForm.get('rut')?.touched}"
-                                type="text" id="rut" formControlName="rut">
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="rut">RUT</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    [ngClass]="{'border-red-500': personForm.get('rut')?.invalid && personForm.get('rut')?.touched}"
+                                    type="text" id="rut" formControlName="rut">
 
-                            @if (personForm.get('rut')?.hasError('invalidRutFormat') && personForm.get('rut')?.touched)
-                            {
-                            <div class="text-red-500 text-sm mt-1">
-                                El formato del RUT no es válido. Ejemplo: 12345678-9
+                                @if (personForm.get('rut')?.hasError('invalidRutFormat') &&
+                                personForm.get('rut')?.touched)
+                                {
+                                <div class="text-red-500 text-sm mt-1">
+                                    El formato del RUT no es válido. Ejemplo: 12345678-9
+                                </div>
+                                }
+                                @if (personForm.get('rut')?.hasError('invalidRutDV') && personForm.get('rut')?.touched)
+                                {
+                                <div class="text-red-500 text-sm mt-1">
+                                    El RUT ingresado no es válido.
+                                </div>
+                                }
                             </div>
-                            }
-                            @if (personForm.get('rut')?.hasError('invalidRutDV') && personForm.get('rut')?.touched) {
-                            <div class="text-red-500 text-sm mt-1">
-                                El RUT ingresado no es válido.
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre<span
+                                        class="text-red-500">*</span></label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    [ngClass]="{'border-red-500': personForm.get('name')?.invalid && personForm.get('name')?.touched}"
+                                    type="text" id="name" formControlName="name" required>
+                                @if (personForm.get('name')?.touched && personForm.get('name')?.invalid) {
+                                <div class="text-red-500 text-sm mt-1">
+                                    El nombre es obligatorio.
+                                </div>
+                                }
                             </div>
-                            }
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="name">Nombre<span
-                                    class="text-red-500">*</span></label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                [ngClass]="{'border-red-500': personForm.get('name')?.invalid && personForm.get('name')?.touched}"
-                                type="text" id="name" formControlName="name" required>
-                            @if (personForm.get('name')?.touched && personForm.get('name')?.invalid) {
-                            <div class="text-red-500 text-sm mt-1">
-                                El nombre es obligatorio.
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="mname">2do Nombre</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="mname" formControlName="middle_name">
                             </div>
-                            }
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="mname">2do Nombre</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="mname" formControlName="middle_name">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">Apellido
-                                Paterno<span class="text-red-500">*</span></label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                [ngClass]="{'border-red-500': personForm.get('first_name')?.invalid && personForm.get('first_name')?.touched}"
-                                type="text" id="fname" formControlName="first_name" required>
-                            @if (personForm.get('first_name')?.touched && personForm.get('first_name')?.invalid) {
-                            <div class="text-red-500 text-sm mt-1">
-                                El apellido paterno es obligatorio.
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="fname">Apellido
+                                    Paterno<span class="text-red-500">*</span></label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    [ngClass]="{'border-red-500': personForm.get('first_name')?.invalid && personForm.get('first_name')?.touched}"
+                                    type="text" id="fname" formControlName="first_name" required>
+                                @if (personForm.get('first_name')?.touched && personForm.get('first_name')?.invalid) {
+                                <div class="text-red-500 text-sm mt-1">
+                                    El apellido paterno es obligatorio.
+                                </div>
+                                }
                             </div>
-                            }
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Apellido
-                                Materno</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="lname" formControlName="last_name">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="birthday">Fecha de
-                                Nacimiento</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="date" id="birthday" formControlName="birthday">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                [ngClass]="{'border-red-500': personForm.get('email')?.invalid && personForm.get('email')?.touched}"
-                                type="email" id="email" formControlName="email" email>
-                            @if (personForm.get('email')?.touched && personForm.get('email')?.invalid) {
-                            <div class="text-red-500 text-sm mt-1">
-                                El email ingresado no es válido.
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="lname">Apellido
+                                    Materno</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="lname" formControlName="last_name">
                             </div>
-                            }
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Teléfono</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="phone" formControlName="phone">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="address">Dirección</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="address" formControlName="address">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Sexo</label>
-                            <select
-                                class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                id="gender" formControlName="gender">
-                                <option value="">Seleccione un sexo</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="profession">Profesión u
-                                Oficio</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="profession" formControlName="profession">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="license">Patente
-                                Vehículo</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="license" formControlName="license_plate">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="medical">Condición
-                                médica</label>
-                            <input
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                type="text" id="medical" formControlName="medical_conditions">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-bold mb-2" for="obs">Observaciones</label>
-                            <textarea rows="4"
-                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                id="obs" formControlName="observations"></textarea>
-                        </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="birthday">Fecha de
+                                    Nacimiento</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="date" id="birthday" formControlName="birthday">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    [ngClass]="{'border-red-500': personForm.get('email')?.invalid && personForm.get('email')?.touched}"
+                                    type="email" id="email" formControlName="email" email>
+                                @if (personForm.get('email')?.touched && personForm.get('email')?.invalid) {
+                                <div class="text-red-500 text-sm mt-1">
+                                    El email ingresado no es válido.
+                                </div>
+                                }
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="phone">Teléfono</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="phone" formControlName="phone">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2"
+                                    for="address">Dirección</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="address" formControlName="address">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="gender">Sexo</label>
+                                <select
+                                    class="shadow border text-gray-700 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    id="gender" formControlName="gender">
+                                    <option value="">Seleccione un sexo</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                </select>
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="profession">Profesión u
+                                    Oficio</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="profession" formControlName="profession">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="license">Patente
+                                    Vehículo</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="license" formControlName="license_plate">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2" for="medical">Condición
+                                    médica</label>
+                                <input
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    type="text" id="medical" formControlName="medical_conditions">
+                            </div>
+                            <div class="mb-4">
+                                <label class="block text-gray-700 text-sm font-bold mb-2"
+                                    for="obs">Observaciones</label>
+                                <textarea rows="4"
+                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="obs" formControlName="observations"></textarea>
+                            </div>
 
-                        <div class="flex items-center justify-between">
-                            <button
-                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
-                                type="submit" [disabled]="personForm.invalid || isProcessing()">Guardar</button>
-                            <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-                                [routerLink]="['/person']">Volver</a>
-                        </div>
+                            @if (view() == 'page') {
+                            <div class="flex items-center justify-between">
+                                <button
+                                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
+                                    type="submit" [disabled]="personForm.invalid || isProcessing()">Guardar</button>
+                                <a class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+                                    [routerLink]="['/person']">Volver</a>
+                            </div>
+                            }
+                        </form>
+                    </div>
+                    } @else {
+                    <h1>Cargando...</h1>
+                    }
 
-                    </form>
                 </div>
-                } @else {
-                <h1>Cargando...</h1>
-                }
-
             </div>
         </div>
-    </div>
-</section>
+    </section>
+</mat-dialog-content>
+@if (view() == 'modal') {
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cerrar</button>
+    <button mat-button [disabled]="personForm.invalid || isProcessing()" (click)="onSubmit()">Guardar</button>
+</mat-dialog-actions>
+}

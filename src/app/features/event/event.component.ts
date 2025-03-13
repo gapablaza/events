@@ -1,20 +1,16 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Store } from '@ngrx/store';
 
 import { eventActions } from './store/event.actions';
 
 @Component({
-    selector: 'app-event',
-    template: `<router-outlet></router-outlet>`,
-    imports: [RouterOutlet]
+  selector: 'app-event',
+  template: `<router-outlet></router-outlet>`,
+  imports: [RouterOutlet],
 })
-export class EventComponent implements OnInit, OnDestroy {
+export class EventComponent implements OnDestroy {
   store = inject(Store);
-
-  ngOnInit(): void {
-    this.store.dispatch(eventActions.moduleOpened());
-  }
 
   ngOnDestroy(): void {
     this.store.dispatch(eventActions.moduleClosed());

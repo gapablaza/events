@@ -16,20 +16,44 @@ import {
 } from '@angular/fire/firestore';
 import { combineLatest, from, map, Observable, of, switchMap } from 'rxjs';
 
-import { Activity, Attendance, Locality, Person, Registration } from '../model';
+import {
+  Activity,
+  Attendance,
+  Event,
+  Locality,
+  Person,
+  Registration,
+} from '../model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class EventService {
   private _firestore = inject(Firestore);
-  private RUCACURA_ID = 'rucacura-2025';
+  // private RUCACURA_ID = 'rucacura-2025';
+
+  // Retorna todos los eventos
+  events(): Observable<Event[]> {
+    return collectionData(query(collection(this._firestore, 'event')), {
+      idField: 'id',
+    }) as Observable<Event[]>;
+  }
+
+  // Retorna los datos del evento específico
+  event(eventId: string): Observable<Event> {
+    return docData(doc(this._firestore, `event/${eventId}`), {
+      idField: 'id',
+    }) as Observable<Event>;
+  }
 
   // Retorna las actividades del evento
   // opcionalmente se puede incluir el conteo de inscripciones en cada actividad
-  activities(includeCounts: boolean = false): Observable<Activity[]> {
+  activities(
+    eventId: string,
+    includeCounts: boolean = false
+  ): Observable<Activity[]> {
     const activitiesRef = query(
-      collection(this._firestore, `event/${this.RUCACURA_ID}/activities`)
+      collection(this._firestore, `event/${eventId}/activities`)
     );
 
     let activities$ = collectionData(activitiesRef, {
@@ -47,7 +71,7 @@ export class EventService {
 
         // Incluir los conteos de registros para cada actividad
         const activitiesWithCounts$ = activities.map((activity) =>
-          from(this._getActivityRegistrationCount(activity.id)).pipe(
+          from(this._getActivityRegistrationCount(eventId, activity.id)).pipe(
             map((count) => ({ ...activity, registrationCount: count }))
           )
         );
@@ -66,11 +90,12 @@ export class EventService {
 
   // Método auxiliar para obtener el conteo de registros de una actividad
   private async _getActivityRegistrationCount(
+    eventId: string,
     activityId: string
   ): Promise<number> {
     const registrationsRef = collection(
       this._firestore,
-      `event/${this.RUCACURA_ID}/activities/${activityId}/registrations`
+      `event/${eventId}/activities/${activityId}/registrations`
     );
 
     const snapshot = await getCountFromServer(registrationsRef);
@@ -78,11 +103,14 @@ export class EventService {
   }
 
   // retorna las inscripciones de una actividad específica
-  getActivityRegistrations(activityId: string): Observable<Attendance[]> {
+  getActivityRegistrations(
+    eventId: string,
+    activityId: string
+  ): Observable<Attendance[]> {
     const registrationsRef = query(
       collection(
         this._firestore,
-        `event/${this.RUCACURA_ID}/activities/${activityId}/registrations`
+        `event/${eventId}/activities/${activityId}/registrations`
       )
     );
 
@@ -92,11 +120,14 @@ export class EventService {
   }
 
   // Retorna una inscripción en particular
-  getRegistration(registrationId: string): Observable<Registration> {
+  getRegistration(
+    eventId: string,
+    registrationId: string
+  ): Observable<Registration> {
     console.log('getRegistration');
     const refRegistration = doc(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations/${registrationId}`
+      `event/${eventId}/registrations/${registrationId}`
     );
     let registration = docData(refRegistration) as Observable<any>;
 
@@ -112,9 +143,9 @@ export class EventService {
   }
 
   // Retorna todas las inscripciones de un evento
-  registrations(): Observable<Registration[]> {
+  registrations(eventId: string): Observable<Registration[]> {
     const registrationRef = query(
-      collection(this._firestore, `event/${this.RUCACURA_ID}/registrations`)
+      collection(this._firestore, `event/${eventId}/registrations`)
     );
 
     let registrations = collectionData(registrationRef, {
@@ -127,6 +158,7 @@ export class EventService {
   // Registra a una persona en el evento (nueva inscripción)
   // TO DO: Validar los Ids de las actividades
   async registrate(
+    eventId: string,
     person: Person,
     locality: Locality,
     activitiesIds: string[] = [],
@@ -143,12 +175,12 @@ export class EventService {
     // Referencias principales
     const eventRegistrationRef = doc(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations/${person.id}`
+      `event/${eventId}/registrations/${person.id}`
     );
 
     const registrationsCollectionRef = collection(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations`
+      `event/${eventId}/registrations`
     );
 
     // Validar si la persona ya está registrada
@@ -208,7 +240,7 @@ export class EventService {
     activitiesIds.forEach((activityId) => {
       const activityRegistrationRef = doc(
         this._firestore,
-        `event/${this.RUCACURA_ID}/activities/${activityId}/registrations/${person.id}`
+        `event/${eventId}/activities/${activityId}/registrations/${person.id}`
       );
 
       batch.set(activityRegistrationRef, {
@@ -234,6 +266,7 @@ export class EventService {
   // Actualiza los datos de una inscripción
   // TO DO: Definir si se permitirá actualizar los datos de la persona
   async editRegistration(
+    eventId: string,
     updatedPerson: Person,
     updatedLocality: Locality,
     updatedActivitiesIds: string[] = [],
@@ -251,12 +284,12 @@ export class EventService {
     // Referencias principales
     const eventRegistrationRef = doc(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations/${updatedPerson.id}`
+      `event/${eventId}/registrations/${updatedPerson.id}`
     );
 
     const registrationsCollectionRef = collection(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations`
+      `event/${eventId}/registrations`
     );
 
     // Verificar si la inscripción existe
@@ -323,7 +356,7 @@ export class EventService {
       console.log('remover actividad: ', activityId);
       const activityRegistrationRef = doc(
         this._firestore,
-        `event/${this.RUCACURA_ID}/activities/${activityId}/registrations/${updatedPerson.id}`
+        `event/${eventId}/activities/${activityId}/registrations/${updatedPerson.id}`
       );
       batch.delete(activityRegistrationRef);
     });
@@ -332,7 +365,7 @@ export class EventService {
     updatedActivitiesIds.forEach((activityId) => {
       const activityRegistrationRef = doc(
         this._firestore,
-        `event/${this.RUCACURA_ID}/activities/${activityId}/registrations/${updatedPerson.id}`
+        `event/${eventId}/activities/${activityId}/registrations/${updatedPerson.id}`
       );
 
       if (
@@ -362,11 +395,11 @@ export class EventService {
 
   // Elimina una inscripción y sus actividades asociadas
   // TO DO: Por definir si se podrá eliminar una inscripción que tiene asistencia registrada
-  async deleteRegistration(personId: string): Promise<void> {
+  async deleteRegistration(eventId: string, personId: string): Promise<void> {
     // Referencia a la inscripción principal
     const eventRegistrationRef = doc(
       this._firestore,
-      `event/${this.RUCACURA_ID}/registrations/${personId}`
+      `event/${eventId}/registrations/${personId}`
     );
 
     // Obtener los datos actuales de la inscripción
@@ -389,7 +422,7 @@ export class EventService {
       (activityId: string) => {
         const activityRegistrationRef = doc(
           this._firestore,
-          `event/${this.RUCACURA_ID}/activities/${activityId}/registrations/${personId}`
+          `event/${eventId}/activities/${activityId}/registrations/${personId}`
         );
         batch.delete(activityRegistrationRef);
       }
@@ -406,12 +439,12 @@ export class EventService {
   }
 
   // Obtiene el conteo de inscripciones de un evento
-  async registrationsCount(): Promise<number> {
+  async registrationsCount(eventId: string): Promise<number> {
     try {
       // Referencia a la colección de registros del evento
       const registrationsCollectionRef = collection(
         this._firestore,
-        `event/${this.RUCACURA_ID}/registrations`
+        `event/${eventId}/registrations`
       );
 
       // Consulta el conteo de documentos
@@ -421,5 +454,30 @@ export class EventService {
       console.error('Error al obtener el conteo de registros:', error);
       throw new Error('No se pudo obtener el conteo de registros del evento.');
     }
+  }
+
+  // Obtiene el detalle de un evento con sus actividades y inscripciones
+  eventWithDetails(
+    eventId: string
+  ): Observable<{
+    event: Event;
+    activities: Activity[];
+    registrations: Registration[];
+  }> {
+    console.log('eventWithDetails');
+    return this.event(eventId).pipe(
+      switchMap((event) =>
+        combineLatest([
+          of(event),
+          this.activities(eventId, true),
+          this.registrations(eventId),
+        ])
+      ),
+      map(([event, activities, registrations]) => ({
+        event,
+        activities,
+        registrations,
+      }))
+    );
   }
 }

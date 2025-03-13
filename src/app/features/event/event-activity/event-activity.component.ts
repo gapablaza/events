@@ -26,12 +26,12 @@ export class EventActivityComponent implements OnInit {
         // this.activityId.set(activityId);
 
         // Llama al servicio para obtener los inscritos
-        this._eventService
-          .getActivityRegistrations(activityId)
-          .subscribe((registrations) => {
-            console.log(registrations);
-            this.registrations.set(registrations);
-          });
+        // this._eventService
+        //   .getActivityRegistrations(activityId)
+        //   .subscribe((registrations) => {
+        //     console.log(registrations);
+        //     this.registrations.set(registrations);
+        //   });
       }
     });
   }

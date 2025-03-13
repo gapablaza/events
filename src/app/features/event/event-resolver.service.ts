@@ -1,4 +1,5 @@
 import { inject, Injectable } from '@angular/core';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { catchError, filter, first, map, Observable, of, tap } from 'rxjs';
 
@@ -9,11 +10,17 @@ import { eventActions } from './store/event.actions';
 export class EventResolver {
   store = inject(Store);
 
-  resolve(): Observable<boolean> {
+  resolve(route: ActivatedRouteSnapshot): Observable<boolean> {
+    const eventId = route.paramMap.get('eventId');
+
+    if (!eventId) {
+      return of(false);
+    }
+
     return this.store.select(eventFeature.selectIsInit).pipe(
       tap((isInit) => {
         if (!isInit) {
-          this.store.dispatch(eventActions.loadAllActivities());
+          this.store.dispatch(eventActions.initEvent({ eventId }));
         }
       }),
       filter((isInit) => isInit),

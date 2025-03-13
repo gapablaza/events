@@ -1,0 +1,13 @@
+<section class="bg-gray-50 m-6 p-6 dark:bg-gray-900">
+
+    <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+        Listado de Eventos
+    </h1>
+    <p class="mb-4">A continuación se despliegan los eventos actualmente registrados y disponibles en la aplicación</p>
+    <ol class="list-inside list-decimal">
+        @for (item of events(); track $index) {
+        <li><a routerLink="/event/{{ item.id }}">{{ item.name }} ({{ item.description }})</a></li>
+        }
+    </ol>
+
+</section>

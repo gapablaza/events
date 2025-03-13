@@ -122,12 +122,12 @@ export class ImportRegistrationsComponent {
       //   registrationData
       // );
 
-      await this.eventSrv.registrate(
-        { ...personData, id: personDoc.id },
-        locality!,
-        activities,
-        registrationData
-      );
+      // await this.eventSrv.registrate(
+      //   { ...personData, id: personDoc.id },
+      //   locality!,
+      //   activities,
+      //   registrationData
+      // );
 
       console.log(`Persona registrada en el evento "rucacura-2025" con ID: ${personDoc.id}`);
     } catch (error) {

@@ -12,6 +12,7 @@ import { eventFeature } from '../store/event.state';
 export class EventProfileComponent {
   private store = inject(Store);
 
+  event = this.store.selectSignal(eventFeature.selectEventSelected);
   registrationsCount = this.store.selectSignal(
     eventFeature.selectRegistrationsCount
   );

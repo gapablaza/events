@@ -1,10 +1,15 @@
 import { createFeature, createReducer, createSelector, on } from '@ngrx/store';
 
-import { Activity, Registration } from '../../../core/model';
+import { Activity, Event, Registration } from '../../../core/model';
 import { eventActions } from './event.actions';
 
 interface EventState {
+  isEventsInit: boolean;
   isInit: boolean;
+
+  events: Event[];
+
+  eventSelected: Event | null;
   activities: Activity[];
   registrations: Registration[];
 
@@ -13,7 +18,12 @@ interface EventState {
 }
 
 const initialState: EventState = {
+  isEventsInit: false,
   isInit: false,
+
+  events: [],
+
+  eventSelected: null,
   activities: [],
   registrations: [],
 
@@ -26,6 +36,67 @@ export const eventFeature = createFeature({
   reducer: createReducer(
     initialState,
 
+    // load all events
+    on(eventActions.loadAllEvents, (state) => ({
+      ...state,
+      isProcessing: true,
+    })),
+    on(eventActions.loadAllEventsSuccess, (state, { events }) => ({
+      ...state,
+      isEventsInit: true,
+      events,
+      isProcessing: false,
+    })),
+    on(eventActions.loadAllEventsFailure, (state) => ({
+      ...state,
+      isEventsInit: true,
+      events: [],
+      isProcessing: false,
+    })),
+
+    // select one event
+    // on(eventActions.selectEvent, (state) => ({
+    //   ...state,
+    //   isProcessing: true,
+    // })),
+    // on(eventActions.selectEventSuccess, (state, { eventSelected }) => ({
+    //   ...state,
+    //   eventSelected,
+    //   isProcessing: false,
+    // })),
+    // on(eventActions.selectEventFailure, (state) => ({
+    //   ...state,
+    //   eventSelected: null,
+    //   isProcessing: false,
+    // })),
+
+    // init event
+    on(eventActions.initEvent, (state) => ({
+      ...state,
+      isProcessing: true,
+    })),
+    on(
+      eventActions.initEventSuccess,
+      (state, { event, activities, registrations }) => ({
+        ...state,
+        eventSelected: event,
+        activities,
+        registrations,
+
+        isInit: true,
+        isProcessing: false,
+      })
+    ),
+    on(eventActions.initEventFailure, (state) => ({
+      ...state,
+      eventSelected: null,
+      activities: [],
+      registrations: [],
+
+      isInit: false,
+      isProcessing: false,
+    })),
+
     // load all activities
     on(eventActions.loadAllActivities, (state) => ({
       ...state,
@@ -33,13 +104,13 @@ export const eventFeature = createFeature({
     })),
     on(eventActions.loadAllActivitiesSuccess, (state, { activities }) => ({
       ...state,
-      isInit: true,
+      // isInit: true,
       activities,
       isProcessing: false,
     })),
     on(eventActions.loadAllActivitiesFailure, (state) => ({
       ...state,
-      isInit: true,
+      // isInit: true,
       activities: [],
       isProcessing: false,
     })),
@@ -92,9 +163,28 @@ export const eventFeature = createFeature({
     })),
 
     // clear state
-    on(eventActions.moduleClosed, () => initialState)
+    on(eventActions.moduleClosed, () => initialState),
+
+    // clear event
+    on(eventActions.clearEvent, () => ({
+      ...initialState,
+
+      eventSelected: null,
+      activities: [],
+      registrations: [],
+
+      isEventsInit: false,
+    }))
   ),
-  extraSelectors: ({ selectRegistrations, selectActivities }) => ({
+  extraSelectors: ({
+    selectEvents,
+    selectRegistrations,
+    selectActivities,
+  }) => ({
+    // Selector para retornar eventos no ocultos
+    selectAvailableEvents: createSelector(selectEvents, (events) =>
+      events.filter((event) => !event.hidden)
+    ),
     // Selector para contar registros
     selectRegistrationsCount: createSelector(
       selectRegistrations,

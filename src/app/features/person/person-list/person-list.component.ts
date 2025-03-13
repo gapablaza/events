@@ -1,21 +1,23 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
 import { ColDef, GridReadyEvent } from 'ag-grid-community'; // Column Definition Type Interface
 import { AG_GRID_LOCALE_ES } from '@ag-grid-community/locale';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { PersonListButtonComponent } from './person-list-button.component';
 import { appFeature } from '../../../store/app.state';
 import { personFeature } from '../store/person.state';
+import { PersonFormComponent } from '../person-form/person-form.component';
 
 @Component({
-    selector: 'app-person-list',
-    templateUrl: './person-list.component.html',
-    imports: [AgGridAngular, RouterLink]
+  selector: 'app-person-list',
+  templateUrl: './person-list.component.html',
+  imports: [AgGridAngular, MatDialogModule],
 })
 export class PersonListComponent {
   private store = inject(Store);
+  private dialog = inject(MatDialog);
 
   locale_text = AG_GRID_LOCALE_ES;
   localities = this.store.selectSignal(appFeature.selectLocalities);
@@ -60,6 +62,19 @@ export class PersonListComponent {
     // this._personSrv.list().subscribe((persons) => {
     //   this.persons = persons;
     //   console.log(persons);
+    // });
+  }
+
+  openModal() {
+    const dialogRef = this.dialog.open(PersonFormComponent, {
+      minWidth: '500px',
+      data: {
+        view: 'modal',
+      }
+    });
+
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   console.log(`Dialog result: ${result}`);
     // });
   }
 }

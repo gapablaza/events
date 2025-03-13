@@ -1,5 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular';
 import {
@@ -9,20 +8,23 @@ import {
   GridReadyEvent,
 } from 'ag-grid-community'; // Column Definition Type Interface
 import { AG_GRID_LOCALE_ES } from '@ag-grid-community/locale';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { Registration } from '../../../core/model';
 import { appFeature } from '../../../store/app.state';
 import { eventFeature } from '../store/event.state';
 import { EventRegistrationButtonComponent } from './event-registrations-button.component';
+import { EventRegistrationFormComponent } from '../event-registration-form/event-registration-form.component';
 
 @Component({
-    selector: 'app-event-import',
-    templateUrl: './event-registrations.component.html',
-    imports: [AgGridAngular, RouterLink]
+  selector: 'app-event-import',
+  templateUrl: './event-registrations.component.html',
+  imports: [AgGridAngular, MatDialogModule],
 })
-export class EventRegistrationsComponent implements OnInit {
+export class EventRegistrationsComponent {
   private _gridApi!: GridApi<Registration>;
   private store = inject(Store);
+  private dialog = inject(MatDialog);
 
   locale_text = AG_GRID_LOCALE_ES;
   localities = this.store.selectSignal(appFeature.selectLocalities);
@@ -147,8 +149,7 @@ export class EventRegistrationsComponent implements OnInit {
       {
         headerName: 'Diferencia',
         cellClass: 'text-right',
-        valueGetter: (r) =>
-          (r.data.total_cost || 0) - (r.data.total_paid || 0),
+        valueGetter: (r) => (r.data.total_cost || 0) - (r.data.total_paid || 0),
         filter: 'agNumberColumnFilter',
       },
       { field: 'code', headerName: 'Código', filter: true },
@@ -203,7 +204,14 @@ export class EventRegistrationsComponent implements OnInit {
     this._gridApi.setGridOption('columnDefs', this.colDefs);
   }
 
-  ngOnInit(): void {}
+  openModal() {
+    const dialogRef = this.dialog.open(EventRegistrationFormComponent, {
+      minWidth: '900px',
+      data: {
+        view: 'modal',
+      },
+    });
+  }
 
   exportToCsv() {
     this._gridApi.exportDataAsCsv();

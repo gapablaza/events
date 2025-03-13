@@ -7,6 +7,8 @@ import { EventRegistrationAddComponent } from './event-registration-add/event-re
 import { EventProfileComponent } from './event-profile/event-profile.component';
 import { EventActivityComponent } from './event-activity/event-activity.component';
 import { EventRegistrationEditComponent } from './event-registration-edit/event-registration-edit.component';
+import { EventListComponent } from './event-list/event-list.component';
+import { EventBaseComponent } from './event-base/event-base.component';
 import { eventFeature } from './store/event.state';
 import { EventEffects } from './store/event.effects';
 import { EventComponent } from './event.component';
@@ -18,40 +20,51 @@ export const EVENT_ROUTES: Routes = [
     path: '',
     providers: [
       EventResolver,
-      provideState(eventFeature), 
-      provideEffects(EventEffects)
+      provideState(eventFeature),
+      provideEffects(EventEffects),
     ],
     component: EventComponent,
-    resolve: {
-      eventActivities: EventResolver,
-    },
     canActivate: [authGuard],
     children: [
       {
         path: '',
-        title: 'Detalle del Evento',
-        component: EventProfileComponent,
+        title: 'Listado de Eventos',
+        component: EventListComponent,
       },
       {
-        path: 'registrations',
-        title: 'Listado de Inscritos',
-        component: EventRegistrationsComponent,
+        path: ':eventId',
+        component: EventBaseComponent,
+        resolve: {
+          eventActivities: EventResolver,
+        },
+        children: [
+          {
+            path: '',
+            title: 'Detalle del Evento',
+            component: EventProfileComponent,
+          },
+          {
+            path: 'registrations',
+            title: 'Listado de Inscritos',
+            component: EventRegistrationsComponent,
+          },
+          {
+            path: 'registrations/add',
+            title: 'Nueva Inscripción',
+            component: EventRegistrationAddComponent,
+          },
+          {
+            path: 'registrations/edit/:registrationId',
+            title: 'Editar Inscripción',
+            component: EventRegistrationEditComponent,
+          },
+          // {
+          //   path: 'activity/:activityId',
+          //   title: 'Registrados en la Actividad',
+          //   component: EventActivityComponent,
+          // },
+        ],
       },
-      {
-        path: 'registrations/add',
-        title: 'Nueva Inscripción',
-        component: EventRegistrationAddComponent,
-      },
-      {
-        path: 'registrations/edit/:registrationId',
-        title: 'Editar Inscripción',
-        component: EventRegistrationEditComponent,
-      },
-      // {
-      //   path: 'activity/:activityId',
-      //   title: 'Registrados en la Actividad',
-      //   component: EventActivityComponent,
-      // },
     ],
   },
   {

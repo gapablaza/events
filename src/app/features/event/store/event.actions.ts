@@ -1,9 +1,24 @@
 import { createActionGroup, emptyProps, props } from '@ngrx/store';
-import { Activity, Locality, Person, Registration } from '../../../core/model';
+import { Activity, Event, Locality, Person, Registration } from '../../../core/model';
 
 export const eventActions = createActionGroup({
   source: 'Event',
   events: {
+    // load all events
+    'Load All Events': emptyProps(),
+    'Load All Events Success': props<{
+      events: Event[];
+    }>(),
+    'Load All Events Failure': emptyProps(),
+
+    // // select one event
+    // 'Select Event': props<{ eventId: string }>(),
+    // 'Select Event Success': props<{ eventSelected: Event }>(),
+    // 'Select Event Failure': emptyProps(),
+
+    // // clear selected event
+    // 'Clear Selected Event': emptyProps(),
+
     // load all activities
     'Load All Activities': emptyProps(),
     'Load All Activities Success': props<{
@@ -66,7 +81,13 @@ export const eventActions = createActionGroup({
     'Delete Registration Failure': props<{ error: string }>(),
 
     // person module status
-    'Module Opened': emptyProps(),
+    // 'Module Opened': emptyProps(),
     'Module Closed': emptyProps(),
+
+    'Init Event': props<{ eventId: string }>(),
+    'Init Event Success': props<{ event: Event, activities: Activity[], registrations: Registration[] }>(),  
+    'Init Event Failure': props<{ error: string }>(),
+
+    'Clear Event': emptyProps(),
   },
 });

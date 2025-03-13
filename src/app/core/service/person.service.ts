@@ -40,14 +40,16 @@ export class PersonService {
   // retorna las personas registradas una única vez
   all(): Promise<Person[]> {
     const refPersons = collection(this._firestore, 'person');
-    return getDocs(refPersons).then(snapshot => 
-      snapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-      } as Person))
+    return getDocs(refPersons).then((snapshot) =>
+      snapshot.docs.map(
+        (doc) =>
+          ({
+            ...doc.data(),
+            id: doc.id,
+          } as Person)
+      )
     );
   }
-  
 
   get(personId: string): Observable<Person> {
     const refPerson = doc(this._firestore, `person/${personId}`);
@@ -108,13 +110,9 @@ export class PersonService {
 
   async update(person: Person): Promise<void> {
     const refPersons = collection(this._firestore, 'person');
-    // TO DO: Buscar eventos "activos", y que no esté fijo el ID del evento
-    const refRegistrations = doc(
-      this._firestore,
-      `event/rucacura-2025/registrations/${person.id}`
-    );
+    const refEvents = collection(this._firestore, 'event');
 
-    // Validar si el RUT está presente y es único
+    // 1.- Validar si el RUT está presente y es único
     if (person.rut) {
       const q = query(refPersons, where('rut', '==', person.rut));
       const querySnapshot = await getDocs(q);
@@ -129,23 +127,43 @@ export class PersonService {
       }
     }
 
-    // Actualizar la persona si no hay conflicto de RUT
+    // 2.- Actualizar la persona si no hay conflicto de RUT
     const refPerson = doc(this._firestore, `person/${person.id}`);
     await updateDoc(refPerson, {
       ...person,
       updated_at: Timestamp.now(),
     });
 
-    // Si la persona está registrada en el evento, actualizamos sus datos
-    const existingRegistrationSnapshot = await getDoc(refRegistrations);
-    if (existingRegistrationSnapshot.exists()) {
-      // Actualizamos los datos de la persona en el evento
-      await updateDoc(refRegistrations, {
-        person_info: {
-          ...person,
-        },
-        updated_at: Timestamp.now(),
-      });
+    // 3. Buscar eventos activos
+    const activeEventsQuery = query(refEvents, where('active', '==', true));
+    const activeEventsSnapshot = await getDocs(activeEventsQuery);
+
+    if (activeEventsSnapshot.empty) {
+      console.log('No hay eventos activos.');
+      return; // Si no hay eventos activos, terminamos aquí
     }
+
+    // 4. Iterar sobre los eventos activos y actualizar si la persona está registrada
+    const batchUpdates = activeEventsSnapshot.docs.map(async (eventDoc) => {
+      const eventId = eventDoc.id;
+      const refRegistration = doc(
+        this._firestore,
+        `event/${eventId}/registrations/${person.id}`
+      );
+
+      // Verificar si la persona está registrada en el evento
+      const registrationSnapshot = await getDoc(refRegistration);
+      if (registrationSnapshot.exists()) {
+        // Actualizar los datos de la persona en la inscripción
+        await updateDoc(refRegistration, {
+          person_info: { ...person },
+          updated_at: Timestamp.now(),
+        });
+        console.log(`Persona actualizada en el evento ${eventId}`);
+      }
+    });
+
+    // 5. Esperar a que todas las actualizaciones terminen
+    await Promise.all(batchUpdates);
   }
 }

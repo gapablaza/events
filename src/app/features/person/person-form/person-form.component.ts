@@ -9,6 +9,8 @@ import {
 import { RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { Store } from '@ngrx/store';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { UIService } from '../../../core/service';
 import { Person } from '../../../core/model';
@@ -20,18 +22,22 @@ import { personFeature } from '../store/person.state';
 @Component({
     selector: 'person-form',
     templateUrl: './person-form.component.html',
-    imports: [ReactiveFormsModule, RouterLink, NgClass]
+    imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, RouterLink, NgClass]
 })
 export class PersonFormComponent implements OnInit {
   fb = inject(FormBuilder);
   store = inject(Store);
   uiSrv = inject(UIService);
 
+  data = inject(MAT_DIALOG_DATA, { optional: true }) as { person: Person | null } | null;
+  dialogRef = inject(MatDialogRef<PersonFormComponent>, { optional: true });
+
   localities = this.store.selectSignal(appFeature.selectLocalities);
   isProcessing = this.store.selectSignal(personFeature.selectIsProcessing);
 
   isLoaded = signal(false);
   mode = signal<'create' | 'update' | null>(null);
+  view = signal<'modal' | 'page'>('modal');
   person = input<Person | null>(null);
 
   readonly personForm = new FormGroup({
@@ -65,9 +71,14 @@ export class PersonFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.person()) {
+    if (!this.data) {
+      this.view.set('page');
+    }
+
+    const personData = this.data?.person ?? this.person();
+    if (personData) {
       this.mode.set('update');
-      this.personForm.patchValue(this.person() as Person);
+      this.personForm.patchValue(personData);
     } else {
       this.mode.set('create');
     }
@@ -84,7 +95,8 @@ export class PersonFormComponent implements OnInit {
         ...this.personForm.value,
         locality_info: locality,
       } as Person;
-      if (this.person()) {
+
+      if (this.mode() === 'update') {
         // si está en modo edición
         this.store.dispatch(personActions.editPerson({ person: tempPerson }));
       } else {
@@ -92,6 +104,7 @@ export class PersonFormComponent implements OnInit {
         this.store.dispatch(personActions.createPerson({ person: tempPerson }));
       }
 
+      this.dialogRef?.close(); // Cierra el modal si fue abierto en modo modal
       // console.log(this.personForm.value);
     } else {
       console.log('error', this.personForm.value);

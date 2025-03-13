@@ -16,16 +16,35 @@ import { Locality, Person, Registration } from '../../../core/model';
 import { appFeature } from '../../../store/app.state';
 import { eventFeature } from '../store/event.state';
 import { eventActions } from '../store/event.actions';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-    selector: 'app-event-registration-form',
-    templateUrl: './event-registration-form.component.html',
-    imports: [ReactiveFormsModule, RouterLink, NgClass]
+  selector: 'app-event-registration-form',
+  templateUrl: './event-registration-form.component.html',
+  imports: [
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatDialogModule,
+    RouterLink,
+    NgClass,
+  ],
 })
 export class EventRegistrationFormComponent implements OnInit {
   private store = inject(Store);
   private _fb = inject(FormBuilder);
   private personSrv = inject(PersonService);
+
+  data = inject(MAT_DIALOG_DATA, { optional: true }) as {
+    registration: Registration | null;
+  } | null;
+  dialogRef = inject(MatDialogRef<EventRegistrationFormComponent>, {
+    optional: true,
+  });
 
   localities = this.store.selectSignal(appFeature.selectLocalities);
   activities = this.store.selectSignal(eventFeature.selectActivities);
@@ -36,6 +55,7 @@ export class EventRegistrationFormComponent implements OnInit {
   isLoaded = signal(false);
   isProcessing = this.store.selectSignal(eventFeature.selectIsProcessing);
   mode = signal<'create' | 'update' | null>(null);
+  view = signal<'modal' | 'page'>('modal');
 
   selectedPerson = signal<Person | null>(null);
   selectedLocality = signal<Locality | null>(null);
@@ -66,24 +86,27 @@ export class EventRegistrationFormComponent implements OnInit {
   });
 
   ngOnInit(): void {
-    if (this.registration()) {
+    if (!this.data) {
+      this.view.set('page');
+    }
+
+    const registrationData = this.data?.registration ?? this.registration();
+    if (registrationData) {
       this.mode.set('update');
 
       // Precargar los datos de la persona
-      this.selectedPerson.set(this.registration()?.person_info!);
-      this.persons.set([this.registration()?.person_info!]);
+      this.selectedPerson.set(registrationData.person_info!);
+      this.persons.set([registrationData.person_info!]);
 
       // Precargar los datos de la localidad
       this.selectedLocality.set(
-        this.localities().find(
-          (l) => l.id === this.registration()?.locality_id
-        )!
+        this.localities().find((l) => l.id === registrationData.locality_id)!
       );
 
       // Precargar los datos de la inscripción
-      const selectedActivities = this.registration()!.activities_registered!;
+      const selectedActivities = registrationData.activities_registered!;
       this.registrationForm.patchValue({
-        ...this.registration(),
+        ...registrationData,
         activities_registered: selectedActivities.join(','),
       });
       this.registrationForm.get('person_id')?.disable();
@@ -171,7 +194,7 @@ export class EventRegistrationFormComponent implements OnInit {
         observations: this.registrationForm.value.observations ?? undefined,
       };
 
-      if (this.registration()) {
+      if (this.mode() === 'update') {
         // Actualizar inscripción
         this.store.dispatch(
           eventActions.editRegistration({
@@ -194,6 +217,8 @@ export class EventRegistrationFormComponent implements OnInit {
           })
         );
       }
+
+      this.dialogRef?.close();
     }
   }
 
