@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "events-77388",
+    "default": "events-prod-b6660",
     "prod": "events-prod-b6660"
   },
   "targets": {},
