@@ -5,7 +5,6 @@ import { provideEffects } from '@ngrx/effects';
 import { EventRegistrationsComponent } from './event-registrations/event-registrations.component';
 import { EventRegistrationAddComponent } from './event-registration-add/event-registration-add.component';
 import { EventProfileComponent } from './event-profile/event-profile.component';
-import { EventActivityComponent } from './event-activity/event-activity.component';
 import { EventRegistrationEditComponent } from './event-registration-edit/event-registration-edit.component';
 import { EventListComponent } from './event-list/event-list.component';
 import { EventBaseComponent } from './event-base/event-base.component';
@@ -14,6 +13,7 @@ import { EventEffects } from './store/event.effects';
 import { EventComponent } from './event.component';
 import { EventResolver } from './event-resolver.service';
 import { authGuard } from '../../auth/guards';
+import { EventAttendanceComponent } from './event-attendance/event-attendance.component';
 
 export const EVENT_ROUTES: Routes = [
   {
@@ -58,11 +58,11 @@ export const EVENT_ROUTES: Routes = [
             title: 'Editar Inscripción',
             component: EventRegistrationEditComponent,
           },
-          // {
-          //   path: 'activity/:activityId',
-          //   title: 'Registrados en la Actividad',
-          //   component: EventActivityComponent,
-          // },
+          {
+            path: 'actividad/:activityId/asistencia',
+            title: 'Asistencia en la Actividad',
+            component: EventAttendanceComponent,
+          },
         ],
       },
     ],

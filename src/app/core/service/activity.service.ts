@@ -7,11 +7,11 @@ import {
   Firestore,
   getDocs,
   query,
-  serverTimestamp,
+  Timestamp,
   updateDoc,
   where,
 } from '@angular/fire/firestore';
-import { filter, from, map, Observable, take, tap } from 'rxjs';
+import { from, Observable, switchMap, throwError } from 'rxjs';
 
 import { Activity, Attendance } from '../model';
 
@@ -20,45 +20,33 @@ import { Activity, Attendance } from '../model';
 })
 export class ActivityService {
   private firestore = inject(Firestore);
-  private RUCACURA_ID = 'F5yR5ftWYE3GCpve1G85';
 
-  list(): Observable<Activity[]> {
+  list(eventId: string): Observable<Activity[]> {
     const refActivities = query(
-      collection(this.firestore, 'activity'),
-      where('event_id', '==', this.RUCACURA_ID)
+      collection(this.firestore, `event/${eventId}/activities`)
     );
 
-    // const refActivities = collection(this.firestore, 'activity');
-    let activities = collectionData(refActivities, {
+    return collectionData(refActivities, {
       idField: 'id',
-    }) as Observable<any[]>;
-
-    return activities.pipe(
-      map((activities) =>
-        activities
-          .map((activity) => {
-            return { ...activity, id: activity.id } as Activity;
-          })
-          .sort((a, b) => (a.position || 0) - (b.position || 0))
-      )
-    );
+    }) as Observable<Activity[]>;
   }
 
-  get(activityId: string): Observable<Activity> {
-    const refActivity = doc(this.firestore, `activity/${activityId}`);
-    let activity = docData(refActivity) as Observable<any>;
-
-    return activity.pipe(
-      map((activity) => {
-        return { ...activity.info, id: activityId } as Activity;
-      })
+  get(eventId: string, activityId: string): Observable<Activity> {
+    const refActivity = doc(
+      this.firestore,
+      `event/${eventId}/activities/${activityId}`
     );
+    return docData(refActivity, {
+      idField: 'id',
+    }) as Observable<Activity>;
   }
 
-  attendance(activityId: string): Observable<Attendance[]> {
+  attendance(eventId: string, activityId: string): Observable<Attendance[]> {
     const attendanceRef = query(
-      collection(this.firestore, 'attendance'),
-      where('activity_id', '==', activityId)
+      collection(
+        this.firestore,
+        `event/${eventId}/activities/${activityId}/registrations`
+      )
     );
 
     return collectionData(attendanceRef, { idField: 'id' }) as Observable<
@@ -66,42 +54,71 @@ export class ActivityService {
     >;
   }
 
-  checkAttendance(attendanceId: string): void {
-    const refAttendance = doc(this.firestore, `attendance/${attendanceId}`);
-    updateDoc(refAttendance, {
-      attendance_time: serverTimestamp(),
-    });
+  checkAttendance(
+    eventId: string,
+    activityId: string,
+    attendanceId: string
+  ): Observable<void> {
+    const refAttendance = doc(
+      this.firestore,
+      `event/${eventId}/activities/${activityId}/registrations/${attendanceId}`
+    );
+    return from(
+      updateDoc(refAttendance, {
+        attendance_at: Timestamp.now(),
+      })
+    );
   }
 
-  attendanceByCode(attendanceCode: string): void {
-    const codeRef = query(
-      collection(this.firestore, 'attendance'),
-      where('attendance_code', '==', attendanceCode)
+  uncheckAttendance(
+    eventId: string,
+    activityId: string,
+    attendanceId: string
+  ): Observable<void> {
+    const refAttendance = doc(
+      this.firestore,
+      `event/${eventId}/activities/${activityId}/registrations/${attendanceId}`
     );
+    return from(
+      updateDoc(refAttendance, {
+        attendance_at: null,
+      })
+    );
+  }
 
-    from(getDocs(codeRef))
-      .pipe(
-        take(1),
-        map((snapshot) => {
-          return snapshot.docs.map((doc) => {
-            return { ...doc.data(), id: doc.id } as Attendance;
-          })[0];
-        }),
-        tap((attendance) => {
-          if (!attendance) {
-            alert('Codigo no encontrado');
-          }
-        }),
-        filter((attendance) => !!attendance)
-      )
-      .subscribe((attendance) => {
-        const refAttendance = doc(
+  attendanceByCode(
+    eventId: string,
+    activityId: string,
+    attendanceCode: string
+  ): Observable<void> {
+    const registrationsRef = collection(
+      this.firestore,
+      `event/${eventId}/registrations`
+    );
+    const q = query(registrationsRef, where('code', '==', attendanceCode));
+
+    return from(getDocs(q)).pipe(
+      switchMap((snapshot) => {
+        if (snapshot.empty) {
+          return throwError(
+            () => new Error('Código de inscripción no encontrado')
+          );
+        }
+
+        const registrationDoc = snapshot.docs[0]; // Se asume que el código es único
+        const personId = registrationDoc.id;
+
+        const attendanceRef = doc(
           this.firestore,
-          `attendance/${attendance.id}`
+          `event/${eventId}/activities/${activityId}/registrations/${personId}`
         );
-        updateDoc(refAttendance, {
-          attendance_time: serverTimestamp(),
-        });
-      });
+
+        return from(
+          updateDoc(attendanceRef, {
+            attendance_at: Timestamp.now(),
+          })
+        );
+      })
+    );
   }
 }

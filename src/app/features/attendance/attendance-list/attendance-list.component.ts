@@ -1,26 +1,50 @@
-import { Component, computed, EventEmitter, input, Output } from "@angular/core";
+import {
+  Component,
+  computed,
+  EventEmitter,
+  input,
+  Output,
+} from '@angular/core';
 
-import { Attendance } from "../../../core/model";
-import { NgClass } from "@angular/common";
+import { Attendance, Registration } from '../../../core/model';
 
 @Component({
-    selector: "app-attendance-list",
-    templateUrl: "./attendance-list.component.html",
-    imports: [NgClass]
+  selector: 'app-attendance-list',
+  templateUrl: './attendance-list.component.html',
+  imports: [],
 })
 export class AttendanceListComponent {
-    attendance = input.required<Attendance[]>();
-    @Output() onCheck = new EventEmitter<Attendance>();
+  registrations = input.required<Registration[]>();
+  attendance = input.required<Attendance[]>();
+  @Output() onCheck = new EventEmitter<Attendance>();
+  @Output() onUncheck = new EventEmitter<Attendance>();
 
-    checked = computed(() => {
-        return this.attendance().filter((a) => a.attendance_time && a.attendance_time > 0);
-    });
+  sortedRegistrations = computed(() =>
+    [...this.registrations()].sort((a, b) =>
+      (a.person_info?.name || '').localeCompare(b.person_info?.name || '', 'es')
+    )
+  );
 
-    unchecked = computed(() => {
-        return this.attendance().filter((a) => !a.attendance_time);
-    });
+  checked = computed(() => {
+    return this.sortedRegistrations().filter((r) =>
+      this.attendance().some((a) => a.id === r.id && a.attendance_at !== null)
+    );
+  });
 
-    check(a: Attendance) {
-        this.onCheck.emit(a);
-    }
+  unchecked = computed(() => {
+    return this.sortedRegistrations().filter(
+      (r) =>
+        !this.attendance().some(
+          (a) => a.id === r.id && a.attendance_at !== null
+        )
+    );
+  });
+
+  check(a: Attendance) {
+    this.onCheck.emit(a);
+  }
+
+  uncheck(a: Attendance) {
+    this.onUncheck.emit(a);
+  }
 }

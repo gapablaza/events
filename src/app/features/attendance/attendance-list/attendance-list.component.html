@@ -1,42 +1,63 @@
-<div class="attendance-lists" style="display: flex;">
-    <div class="attendance-list">
-        <h3>Inscritos</h3>
-        <ol>
-            @for (item of attendance(); track item.id) {
-                <li [ngClass]="item.attendance_time ? 'checked' : ''">
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
-                    @if (!item.attendance_time) {
-                        <button (click)="check(item)">Presente</button>
-                    }
-                </li>
+<div class="flex gap-4">
+    <!-- Inscritos -->
+    <div class="w-1/3 p-4">
+        <h3 class="text-lg font-semibold mb-2">
+            Inscritos ({{ sortedRegistrations().length }})
+        </h3>
+        <ul class="list-outside space-y-2">
+            @for (item of sortedRegistrations(); track item.id) {
+            <li class="p-2 border rounded-md bg-white inline-flex w-full justify-between items-center">
+                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
+                <span>
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                    {{ codeTxt }}
+                </span>
+            </li>
             }
-        </ol>
+        </ul>
     </div>
-    <div class="attendance-list presents">
-        <h3>Presentes</h3>
-        <ol>
+
+    <!-- Presentes -->
+    <div class="w-1/3 p-4 bg-gray-100 rounded-md">
+        <h3 class="text-lg font-semibold mb-2">
+            Presentes ({{ checked().length }})
+        </h3>
+        <ul class="list-outside space-y-2">
             @for (item of checked(); track item.id) {
-                <li>
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
-                    @if (!item.attendance_time) {
-                        <button (click)="check(item)">Presente</button>
-                    }
-                </li>
+            <li class="p-2 border rounded-md bg-green-100 inline-flex w-full justify-between items-center">
+                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
+                <span>
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                    {{ codeTxt }}
+                </span>
+                <button class="ml-2 px-3 py-1 text-white bg-red-500 hover:bg-red-600 rounded" (click)="uncheck(item)">
+                    Eliminar
+                </button>
+            </li>
             } @empty {
-                <li>No hay inscritos</li>}
-        </ol>
-    </div>
-    <div class="attendance-list">
-        <h3>Faltantes</h3>
-        <ol>
-            @for (item of unchecked(); track item.id) {
-                <li>
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }} [Código: {{ item.attendance_code }}]
-                    @if (!item.attendance_time) {
-                        <button (click)="check(item)">Presente</button>
-                    }
-                </li>
+            <li class="p-2 text-gray-500">No hay presentes</li>
             }
-        </ol>
+        </ul>
+    </div>
+
+    <!-- Faltantes -->
+    <div class="w-1/3 p-4">
+        <h3 class="text-lg font-semibold mb-2">
+            Faltantes ({{ unchecked().length }})
+        </h3>
+        <ul class="list-outside space-y-2">
+            @for (item of unchecked(); track item.id) {
+            <li class="p-2 border rounded-md bg-red-100 inline-flex w-full justify-between items-center">
+                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
+                <span>
+                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                    {{ codeTxt }}
+                </span>
+                <button class="ml-2 px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded" (click)="check(item)">
+                    Presente
+                </button>
+            </li>
+            }
+        </ul>
     </div>
 </div>

@@ -1,50 +1,70 @@
 @if (isInit()) {
-  <main class="main">
-  
-    <nav class="flex items-center justify-between flex-wrap bg-teal-500 p-6 mb-6">
-      <div class="flex items-center flex-shrink-0 text-white mr-6">
-        <span class="font-semibold text-xl tracking-tight">EVNT</span>
-      </div>
-      <div class="block lg:hidden">
-        <button
-          class="flex items-center px-3 py-2 border rounded text-teal-200 border-teal-400 hover:text-white hover:border-white">
-          <svg class="fill-current h-3 w-3" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <title>Menu</title>
-            <path d="M0 3h20v2H0V3zm0 6h20v2H0V9zm0 6h20v2H0v-2z" />
-          </svg>
-        </button>
-      </div>
-      <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto">
-        <div class="text-sm lg:flex-grow">
-          <a routerLink="/" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Inicio
-          </a>
+<main class="main">
+
+  <nav class="bg-white dark:bg-gray-900 shadow-md">
+    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+
+      <!-- Sección Izquierda: Logo y Links de Navegación -->
+      <div class="flex items-center space-x-6">
+        <!-- Logo -->
+        <a routerLink="/" class="text-2xl font-bold text-gray-900 dark:text-white">EVNT</a>
+
+        <!-- Links de navegación -->
+        <div class="hidden md:flex space-x-4">
+          <a routerLink="/" class="text-gray-700 dark:text-gray-300 hover:text-blue-600">Inicio</a>
           @if (isAuth()) {
-          <a routerLink="/person" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Personas
-          </a>
-          <a routerLink="/event" class="block mt-4 lg:inline-block lg:mt-0 text-teal-200 hover:text-white mr-4">
-            Eventos
-          </a>
-          }
-        </div>
-        <div>
-          <span class="block text-sm lg:inline-block lg:mt-0 text-teal-200 mr-4">
-            v{{ v }}
-          </span>
-          @if (!isAuth()) {
-          <a routerLink="/login"
-            class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Ingresar</a>
-          } @else {
-          <a (click)="logout()"
-            class="inline-block text-sm px-4 py-2 leading-none border rounded text-white border-white hover:border-transparent hover:text-teal-500 hover:bg-white mt-4 lg:mt-0">Salir</a>
+          <a routerLink="/person" class="text-gray-700 dark:text-gray-300 hover:text-blue-600">Personas</a>
+          <a routerLink="/event" class="text-gray-700 dark:text-gray-300 hover:text-blue-600">Eventos</a>
           }
         </div>
       </div>
-    </nav>
-  
-    <router-outlet />
-  </main>
+
+      <!-- Sección Derecha: Controles de Usuario -->
+      <div class="flex items-center space-x-4">
+        <span class="text-sm text-gray-500 dark:text-gray-400">v{{ v }}</span>
+        @if (!isAuth()) {
+        <a routerLink="/login" class="px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition">
+          Ingresar
+        </a>
+        } @else {
+        <button (click)="logout()"
+          class="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 rounded-lg transition">
+          Salir
+        </button>
+        }
+      </div>
+
+      <!-- Botón de Menú Móvil -->
+      <button (click)="toggleMenu()" class="md:hidden text-gray-700 dark:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"></path>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Menú móvil desplegable -->
+    @if (menuOpen) {
+    <div class="md:hidden bg-white dark:bg-gray-800 border-t">
+      <a routerLink="/"
+        class="block py-2 px-6 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+        Inicio
+      </a>
+      @if (isAuth()) {
+      <a routerLink="/person"
+        class="block py-2 px-6 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+        Personas
+      </a>
+      <a routerLink="/event"
+        class="block py-2 px-6 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+        Eventos
+      </a>
+      }
+    </div>
+    }
+  </nav>
+
+  <router-outlet />
+</main>
 } @else {
-  Cargando...
+Cargando...
 }
