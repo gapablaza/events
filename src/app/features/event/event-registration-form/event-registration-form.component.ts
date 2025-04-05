@@ -285,10 +285,13 @@ export class EventRegistrationFormComponent implements OnInit {
   }
 
   onDelete() {
-    if (this.registration()) {
+    if (this.mode() === 'update') {
+      const registrationData = this.data?.registration ?? this.registration();
       this.store.dispatch(
-        eventActions.deleteRegistration({ id: this.registration()!.id })
+        eventActions.deleteRegistration({ id: registrationData!.id })
       );
+
+      this.dialogRef?.close();
     }
   }
 }

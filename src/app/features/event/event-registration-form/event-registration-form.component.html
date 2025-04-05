@@ -199,7 +199,8 @@
                         <div>
                             <button
                                 class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50 disabled:cursor-not-allowed"
-                                type="button" (click)="onDelete()">Eliminar Inscripción</button>
+                                type="button" (click)="onDelete()" [disabled]="isProcessing()">Eliminar
+                                Inscripción</button>
                         </div>
                         }
                         } @else {
@@ -213,8 +214,8 @@
     </section>
 </mat-dialog-content>
 @if (view() == 'modal') {
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cerrar</button>
-        <button mat-button [disabled]="registrationForm.invalid || isProcessing()" (click)="onSubmit()">Guardar</button>
-    </mat-dialog-actions>
-    }
+<mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cerrar</button>
+    <button mat-button [disabled]="registrationForm.invalid || isProcessing()" (click)="onSubmit()">Guardar</button>
+</mat-dialog-actions>
+}

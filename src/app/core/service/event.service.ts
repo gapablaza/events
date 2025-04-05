@@ -431,7 +431,6 @@ export class EventService {
     // Commit del batch
     try {
       await batch.commit();
-      console.log('Inscripción eliminada exitosamente');
     } catch (error) {
       console.error('Error al intentar eliminar la inscripción:', error);
       throw error;
@@ -457,14 +456,11 @@ export class EventService {
   }
 
   // Obtiene el detalle de un evento con sus actividades y inscripciones
-  eventWithDetails(
-    eventId: string
-  ): Observable<{
+  eventWithDetails(eventId: string): Observable<{
     event: Event;
     activities: Activity[];
     registrations: Registration[];
   }> {
-    console.log('eventWithDetails');
     return this.event(eventId).pipe(
       switchMap((event) =>
         combineLatest([

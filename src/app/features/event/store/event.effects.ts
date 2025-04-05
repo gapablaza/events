@@ -159,7 +159,7 @@ export class EventEffects {
           this.eventSrv.deleteRegistration(event!.id, id)
         ).pipe(
           map(() => {
-            this.router.navigate(['/event/registrations']);
+            // this.router.navigate(['/event/registrations']);
             return eventActions.deleteRegistrationSuccess({
               message: 'Inscripción eliminada correctamente',
             });
@@ -167,7 +167,7 @@ export class EventEffects {
           catchError((err) => {
             const error =
               err instanceof Error ? err.message : 'Error inesperado';
-            return of(eventActions.createRegistrationFailure({ error }));
+            return of(eventActions.deleteRegistrationFailure({ error }));
           })
         )
       )
