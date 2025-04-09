@@ -75,6 +75,7 @@ export class PersonListComponent {
   ];
 
   onGridReady(params: GridReadyEvent) {
+    this._gridApi = params.api;
     // this._personSrv.list().subscribe((persons) => {
     //   this.persons = persons;
     //   console.log(persons);
