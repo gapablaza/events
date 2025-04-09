@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { AgGridAngular } from 'ag-grid-angular'; // Angular Data Grid Component
-import { ColDef, GridReadyEvent } from 'ag-grid-community'; // Column Definition Type Interface
+import { ColDef, GridApi, GridReadyEvent } from 'ag-grid-community'; // Column Definition Type Interface
 import { AG_GRID_LOCALE_ES } from '@ag-grid-community/locale';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
@@ -9,6 +9,7 @@ import { PersonListButtonComponent } from './person-list-button.component';
 import { appFeature } from '../../../store/app.state';
 import { personFeature } from '../store/person.state';
 import { PersonFormComponent } from '../person-form/person-form.component';
+import { Person } from '../../../core/model';
 
 @Component({
   selector: 'app-person-list',
@@ -16,6 +17,7 @@ import { PersonFormComponent } from '../person-form/person-form.component';
   imports: [AgGridAngular, MatDialogModule],
 })
 export class PersonListComponent {
+  private _gridApi!: GridApi<Person>;
   private store = inject(Store);
   private dialog = inject(MatDialog);
 
@@ -37,6 +39,20 @@ export class PersonListComponent {
     { field: 'first_name', headerName: 'Apellido Paterno', filter: true },
     { field: 'last_name', headerName: 'Apellido Materno', filter: true },
     { field: 'birthday', headerName: 'Fecha de Nacimiento', filter: true },
+    {
+      headerName: 'Edad',
+      width: 100,
+      cellClass: 'text-right',
+      valueGetter: (r) => {
+        if (r.data.birthday) {
+          const age = this.calculateAge(r.data.birthday);
+          return age < 10 ? `0${age}` : `${age}`;
+        } else {
+          return '';
+        }
+      },
+      filter: 'agNumberColumnFilter',
+    },
     { field: 'email', headerName: 'Email', filter: true },
     { field: 'phone', headerName: 'Teléfono', filter: true },
     { field: 'address', headerName: 'Dirección', filter: true },
@@ -65,16 +81,32 @@ export class PersonListComponent {
     // });
   }
 
+  calculateAge(birthday: string): number {
+    const birthDate = new Date(birthday);
+    const today = new Date();
+
+    let age = today.getFullYear() - birthDate.getFullYear();
+    return today.getMonth() > birthDate.getMonth() ||
+      (today.getMonth() === birthDate.getMonth() &&
+        today.getDate() >= birthDate.getDate())
+      ? age
+      : age - 1;
+  }
+
   openModal() {
     const dialogRef = this.dialog.open(PersonFormComponent, {
       minWidth: '500px',
       data: {
         view: 'modal',
-      }
+      },
     });
 
     // dialogRef.afterClosed().subscribe((result) => {
     //   console.log(`Dialog result: ${result}`);
     // });
+  }
+
+  exportToCsv() {
+    this._gridApi.exportDataAsCsv();
   }
 }
