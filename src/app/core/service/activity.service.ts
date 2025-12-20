@@ -5,6 +5,7 @@ import {
   doc,
   docData,
   Firestore,
+  getDoc,
   getDocs,
   query,
   Timestamp,
@@ -113,9 +114,21 @@ export class ActivityService {
           `event/${eventId}/activities/${activityId}/registrations/${personId}`
         );
 
-        return from(
-          updateDoc(attendanceRef, {
-            attendance_at: Timestamp.now(),
+        return from(getDoc(attendanceRef)).pipe(
+          switchMap((attendanceSnapshot) => {
+            // Validar si ya está registrada la asistencia
+            if (attendanceSnapshot.data()?.['attendance_at']) {
+              return throwError(
+                () => new Error('La asistencia ya se encontraba registrada')
+              );
+            }
+
+            // Registrar la asistencia si aún no existe
+            return from(
+              updateDoc(attendanceRef, {
+                attendance_at: Timestamp.now(),
+              })
+            );
           })
         );
       })

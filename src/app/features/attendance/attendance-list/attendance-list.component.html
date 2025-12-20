@@ -6,12 +6,17 @@
         </h3>
         <ul class="list-outside space-y-2">
             @for (item of sortedRegistrations(); track item.id) {
-            <li class="p-2 border rounded-md bg-white inline-flex w-full justify-between items-center">
-                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
-                <span>
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
-                    {{ codeTxt }}
-                </span>
+            <li class="p-3 border rounded-md bg-white w-full flex justify-between items-center">
+                <div class="flex flex-col text-left">
+                    <span class="font-medium text-gray-900">
+                        {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                        {{ item.code ? '[Código: ' + item.code + ']' : '[Sin código]' }}
+                    </span>
+                    <span class="text-sm text-gray-600">
+                        {{ item.locality_info?.display_name ?? 'Sin localidad' }} |
+                        {{ (item.person_info?.birthday | age) + ' años' }}
+                    </span>
+                </div>
             </li>
             }
         </ul>
@@ -24,13 +29,20 @@
         </h3>
         <ul class="list-outside space-y-2">
             @for (item of checked(); track item.id) {
-            <li class="p-2 border rounded-md bg-green-100 inline-flex w-full justify-between items-center">
-                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
-                <span>
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
-                    {{ codeTxt }}
-                </span>
-                <button class="ml-2 px-3 py-1 text-white bg-red-500 hover:bg-red-600 rounded" (click)="uncheck(item)">
+            <li class="p-3 border rounded-md bg-green-100 w-full flex justify-between items-center">
+                <div class="flex flex-col text-left">
+                    <span class="font-medium text-gray-900">
+                        {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                        {{ item.code ? '[Código: ' + item.code + ']' : '[Sin código]' }}
+                    </span>
+                    <span class="text-sm text-gray-600">
+                        {{ item.locality_info?.display_name ?? 'Sin localidad' }} |
+                        {{ (item.person_info?.birthday | age) + ' años' }}
+                    </span>
+                </div>
+
+                <button class="ml-4 px-3 py-1 text-white bg-red-500 hover:bg-red-600 rounded whitespace-nowrap"
+                    (click)="uncheck(item)">
                     Eliminar
                 </button>
             </li>
@@ -47,16 +59,25 @@
         </h3>
         <ul class="list-outside space-y-2">
             @for (item of unchecked(); track item.id) {
-            <li class="p-2 border rounded-md bg-red-100 inline-flex w-full justify-between items-center">
-                @let codeTxt = item.code ? '[Código: ' + item.code + ']' : '[Sin código]';
-                <span>
-                    {{ item.person_info?.name }} {{ item.person_info?.first_name }}
-                    {{ codeTxt }}
-                </span>
-                <button class="ml-2 px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded" (click)="check(item)">
+            <li class="p-3 border rounded-md bg-red-100 w-full flex justify-between items-center">
+                <div class="flex flex-col text-left">
+                    <span class="font-medium text-gray-900">
+                        {{ item.person_info?.name }} {{ item.person_info?.first_name }}
+                        {{ item.code ? '[Código: ' + item.code + ']' : '[Sin código]' }}
+                    </span>
+                    <span class="text-sm text-gray-600">
+                        {{ item.locality_info?.display_name ?? 'Sin localidad' }} |
+                        {{ (item.person_info?.birthday | age) + ' años' }}
+                    </span>
+                </div>
+
+                <button class="ml-4 px-3 py-1 text-white bg-blue-500 hover:bg-blue-600 rounded whitespace-nowrap"
+                    (click)="check(item)">
                     Presente
                 </button>
             </li>
+            } @empty {
+            <li class="p-2 text-gray-500">Todos presentes</li>
             }
         </ul>
     </div>

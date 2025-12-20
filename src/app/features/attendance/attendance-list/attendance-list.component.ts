@@ -7,11 +7,12 @@ import {
 } from '@angular/core';
 
 import { Attendance, Registration } from '../../../core/model';
+import { AgePipe } from '../../../shared/pipes/age.pipe';
 
 @Component({
   selector: 'app-attendance-list',
   templateUrl: './attendance-list.component.html',
-  imports: [],
+  imports: [AgePipe],
 })
 export class AttendanceListComponent {
   registrations = input.required<Registration[]>();

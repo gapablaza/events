@@ -1,10 +1,12 @@
 import {
   Component,
   computed,
+  ElementRef,
   inject,
   OnDestroy,
   OnInit,
   signal,
+  ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -22,6 +24,8 @@ import { ActivityService, UIService } from '../../../core/service';
   imports: [AttendanceListComponent, RouterLink, FormsModule],
 })
 export class EventAttendanceComponent implements OnInit, OnDestroy {
+  @ViewChild('codeInput') codeInputRef!: ElementRef<HTMLInputElement>;
+
   store = inject(Store);
   route = inject(ActivatedRoute);
   activitySrv = inject(ActivityService);
@@ -83,10 +87,16 @@ export class EventAttendanceComponent implements OnInit, OnDestroy {
         next: () => {
           this.uiSrv.showSuccess('Asistencia registrada');
           this.attendanceCode = ''; // Limpiar campo
+          this.codeInputRef.nativeElement.focus(); // Enfocar input
           this.loading.set(false);
         },
         error: (err) => {
-          this.uiSrv.showError('No se pudo registrar la asistencia');
+          const errorMessage =
+            err instanceof Error && err.message
+              ? err.message
+              : 'No se pudo registrar la asistencia';
+          this.uiSrv.showError(errorMessage);
+          this.codeInputRef.nativeElement.focus(); // Enfocar input
           this.loading.set(false);
         },
       });

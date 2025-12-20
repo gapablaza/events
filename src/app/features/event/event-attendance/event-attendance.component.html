@@ -17,7 +17,7 @@
     <div class="flex justify-end">
         <!-- Formulario para ingresar código de asistencia -->
         <form (submit)="attendanceByCode()" class="flex gap-2 mb-4 w-full md:w-1/3">
-            <input type="text" [(ngModel)]="attendanceCode" name="attendanceCode"
+            <input type="text" [(ngModel)]="attendanceCode" name="attendanceCode" #codeInput
                 class="border p-2 rounded w-full dark:bg-gray-800 dark:text-white"
                 placeholder="Ingrese el código de inscripción" required />
             <button type="submit" [disabled]="loading()"
