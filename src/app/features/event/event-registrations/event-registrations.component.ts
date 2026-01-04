@@ -47,19 +47,39 @@ export class EventRegistrationsComponent {
       filter: true,
     },
     {
-      headerName: 'Nombres',
-      valueGetter: (r) =>
-        `${r.data.person_info.name} ${r.data.person_info.middle_name || ''}`,
+      headerName: 'Nombre',
+      field: 'person_info.name',
       filter: true,
     },
     {
-      headerName: 'Apellidos',
-      valueGetter: (r) =>
-        `${r.data.person_info.first_name} ${
-          r.data.person_info.last_name || ''
-        }`,
+      headerName: '2do Nombre',
+      field: 'person_info.middle_name',
       filter: true,
     },
+    // {
+    //   headerName: 'Nombres',
+    //   valueGetter: (r) =>
+    //     `${r.data.person_info.name} ${r.data.person_info.middle_name || ''}`,
+    //   filter: true,
+    // },
+    {
+      headerName: 'Apellido Paterno',
+      field: 'person_info.first_name',
+      filter: true,
+    },
+    {
+      headerName: 'Apellido Materno',
+      field: 'person_info.last_name',
+      filter: true,
+    },
+    // {
+    //   headerName: 'Apellidos',
+    //   valueGetter: (r) =>
+    //     `${r.data.person_info.first_name} ${
+    //       r.data.person_info.last_name || ''
+    //     }`,
+    //   filter: true,
+    // },
     {
       headerName: 'F. Nacimiento',
       field: 'person_info.birthday',
@@ -154,9 +174,8 @@ export class EventRegistrationsComponent {
       },
       { field: 'code', headerName: 'Código', filter: true },
       {
-        field: 'person_info.gender',
-        headerName: 'Sexo',
-        width: 100,
+        field: 'registration_date',
+        headerName: 'F. Registro',
         filter: true,
       },
       {
@@ -164,11 +183,6 @@ export class EventRegistrationsComponent {
         headerName: 'Dentro del recinto',
         cellDataType: 'boolean',
         // valueGetter: (r) => (r.data.inside_enclosure && r.data.inside_enclosure === 'true' ? 'Si' : 'No'),
-        filter: true,
-      },
-      {
-        field: 'license_plate',
-        headerName: 'Patente Vehículo',
         filter: true,
       },
       {
@@ -196,6 +210,17 @@ export class EventRegistrationsComponent {
       {
         field: 'person_info.phone',
         headerName: 'Teléfono',
+        filter: true,
+      },
+      {
+        field: 'person_info.gender',
+        headerName: 'Sexo',
+        width: 100,
+        filter: true,
+      },
+      {
+        field: 'license_plate',
+        headerName: 'Patente Vehículo',
         filter: true,
       },
       { field: 'observations', headerName: 'Observaciones', filter: true }

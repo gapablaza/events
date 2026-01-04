@@ -33,7 +33,13 @@ export class PersonListComponent {
       pinned: 'left',
       cellRenderer: PersonListButtonComponent,
     },
-    { field: 'rut', headerName: 'Rut', filter: true },
+    {
+      headerName: 'Localidad / Sector',
+      valueGetter: (r) =>
+        this.localities().find((l) => l.id === r.data.locality_id)
+          ?.display_name,
+      filter: true,
+    },
     { field: 'name', headerName: 'Nombre', filter: true },
     { field: 'middle_name', headerName: '2do Nombre', filter: true },
     { field: 'first_name', headerName: 'Apellido Paterno', filter: true },
@@ -53,24 +59,18 @@ export class PersonListComponent {
       },
       filter: 'agNumberColumnFilter',
     },
-    { field: 'email', headerName: 'Email', filter: true },
-    { field: 'phone', headerName: 'Teléfono', filter: true },
-    { field: 'address', headerName: 'Dirección', filter: true },
-    { field: 'gender', headerName: 'Sexo', filter: true },
-    { field: 'profession', headerName: 'Profesión u Oficio', filter: true },
-    { field: 'license_plate', headerName: 'Patente', filter: true },
     {
       field: 'medical_conditions',
       headerName: 'Condición médica',
       filter: true,
     },
-    {
-      headerName: 'Localidad / Sector',
-      valueGetter: (r) =>
-        this.localities().find((l) => l.id === r.data.locality_id)
-          ?.display_name,
-      filter: true,
-    },
+    { field: 'profession', headerName: 'Profesión u Oficio', filter: true },
+    { field: 'rut', headerName: 'Rut', filter: true },
+    { field: 'email', headerName: 'Email', filter: true },
+    { field: 'phone', headerName: 'Teléfono', filter: true },
+    { field: 'address', headerName: 'Dirección', filter: true },
+    { field: 'gender', headerName: 'Sexo', filter: true },
+    { field: 'license_plate', headerName: 'Patente', filter: true },
     { field: 'observations', headerName: 'Observaciones', filter: true },
   ];
 

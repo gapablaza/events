@@ -79,6 +79,7 @@ export class EventRegistrationFormComponent implements OnInit {
       validators: [Validators.required],
     }),
     code: new FormControl<string>(''),
+    registration_date: new FormControl<string>(''),
     inside_enclosure: new FormControl<boolean | string | null>(null),
     license_plate: new FormControl<string>(''),
     vehicle_owner: new FormControl<boolean | string | null>(null),
@@ -116,6 +117,9 @@ export class EventRegistrationFormComponent implements OnInit {
     } else {
       this.mode.set('create');
       this.populateCheckboxes();
+
+      // Precarga la fecha actual en el campo registration_date
+      // this.registrationForm.get('registration_date')?.setValue(new Date().toISOString().split('T')[0]);
 
       // TO DO: cambiar por autocompletado
       this.personSrv.list().subscribe((persons) => {
@@ -188,6 +192,7 @@ export class EventRegistrationFormComponent implements OnInit {
         totalCost: this.registrationForm.value.total_cost ?? 0,
         totalPaid: this.registrationForm.value.total_paid ?? 0,
         code: this.registrationForm.value.code ?? undefined,
+        registrationDate: this.registrationForm.value.registration_date ?? undefined,
         insideEnclosure: tempInsideEnclosure,
         licensePlate: this.registrationForm.value.license_plate ?? undefined,
         vehicleOwner: tempVehicleOwner,

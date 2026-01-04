@@ -11,6 +11,7 @@ export interface Registration {
   total_cost?: number;
   total_paid?: number;
   code?: string;
+  registration_date?: string;
   inside_enclosure?: boolean;
   license_plate?: string;
   vehicle_owner?: boolean;

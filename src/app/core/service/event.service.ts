@@ -166,6 +166,7 @@ export class EventService {
       totalCost?: number;
       totalPaid?: number;
       code?: string;
+      registrationDate?: string;
       insideEnclosure?: boolean;
       licensePlate?: string;
       vehicleOwner?: boolean;
@@ -221,6 +222,7 @@ export class EventService {
           ? registrationData.totalPaid
           : 0,
       code: registrationData.code || null,
+      registration_date: registrationData.registrationDate || null,
       // inside_enclosure: registrationData.insideEnclosure || null,
       inside_enclosure:
         registrationData.insideEnclosure !== undefined
@@ -274,6 +276,7 @@ export class EventService {
       totalCost?: number;
       totalPaid?: number;
       code?: string;
+      registrationDate?: string;
       insideEnclosure?: boolean;
       licensePlate?: string;
       vehicleOwner?: boolean;
@@ -328,6 +331,7 @@ export class EventService {
           ? updatedRegistrationData.totalPaid
           : 0,
       code: updatedRegistrationData.code || null,
+      registration_date: updatedRegistrationData.registrationDate || null,
       inside_enclosure:
         updatedRegistrationData.insideEnclosure !== undefined
           ? updatedRegistrationData.insideEnclosure
