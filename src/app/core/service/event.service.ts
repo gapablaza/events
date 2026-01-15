@@ -6,7 +6,7 @@ import {
   docData,
   documentId,
   Firestore,
-  getCountFromServer,
+  // getCountFromServer,
   getDoc,
   getDocs,
   query,
@@ -62,45 +62,46 @@ export class EventService {
 
     return activities$.pipe(
       switchMap((activities) => {
-        if (!includeCounts) {
+
+        // if (!includeCounts) {
           // Retornar actividades sin incluir los conteos
           return of(
             activities.sort((a, b) => (a.position || 0) - (b.position || 0))
           );
-        }
+        // }
 
-        // Incluir los conteos de registros para cada actividad
-        const activitiesWithCounts$ = activities.map((activity) =>
-          from(this._getActivityRegistrationCount(eventId, activity.id)).pipe(
-            map((count) => ({ ...activity, registrationCount: count }))
-          )
-        );
+        // // Incluir los conteos de registros para cada actividad
+        // const activitiesWithCounts$ = activities.map((activity) =>
+        //   from(this._getActivityRegistrationCount(eventId, activity.id)).pipe(
+        //     map((count) => ({ ...activity, registrationCount: count }))
+        //   )
+        // );
 
-        // Combinar resultados de las actividades con sus conteos
-        return combineLatest(activitiesWithCounts$).pipe(
-          map((activitiesWithCounts) =>
-            activitiesWithCounts.sort(
-              (a, b) => (a.position || 0) - (b.position || 0)
-            )
-          )
-        );
+        // // Combinar resultados de las actividades con sus conteos
+        // return combineLatest(activitiesWithCounts$).pipe(
+        //   map((activitiesWithCounts) =>
+        //     activitiesWithCounts.sort(
+        //       (a, b) => (a.position || 0) - (b.position || 0)
+        //     )
+        //   )
+        // );
       })
     );
   }
 
   // Método auxiliar para obtener el conteo de registros de una actividad
-  private async _getActivityRegistrationCount(
-    eventId: string,
-    activityId: string
-  ): Promise<number> {
-    const registrationsRef = collection(
-      this._firestore,
-      `event/${eventId}/activities/${activityId}/registrations`
-    );
+  // private async _getActivityRegistrationCount(
+  //   eventId: string,
+  //   activityId: string
+  // ): Promise<number> {
+  //   const registrationsRef = collection(
+  //     this._firestore,
+  //     `event/${eventId}/activities/${activityId}/registrations`
+  //   );
 
-    const snapshot = await getCountFromServer(registrationsRef);
-    return snapshot.data().count;
-  }
+  //   const snapshot = await getCountFromServer(registrationsRef);
+  //   return snapshot.data().count;
+  // }
 
   // retorna las inscripciones de una actividad específica
   getActivityRegistrations(
@@ -442,22 +443,22 @@ export class EventService {
   }
 
   // Obtiene el conteo de inscripciones de un evento
-  async registrationsCount(eventId: string): Promise<number> {
-    try {
-      // Referencia a la colección de registros del evento
-      const registrationsCollectionRef = collection(
-        this._firestore,
-        `event/${eventId}/registrations`
-      );
+  // async registrationsCount(eventId: string): Promise<number> {
+  //   try {
+  //     // Referencia a la colección de registros del evento
+  //     const registrationsCollectionRef = collection(
+  //       this._firestore,
+  //       `event/${eventId}/registrations`
+  //     );
 
-      // Consulta el conteo de documentos
-      const snapshot = await getCountFromServer(registrationsCollectionRef);
-      return snapshot.data().count; // Retorna el número de documentos
-    } catch (error) {
-      console.error('Error al obtener el conteo de registros:', error);
-      throw new Error('No se pudo obtener el conteo de registros del evento.');
-    }
-  }
+  //     // Consulta el conteo de documentos
+  //     const snapshot = await getCountFromServer(registrationsCollectionRef);
+  //     return snapshot.data().count; // Retorna el número de documentos
+  //   } catch (error) {
+  //     console.error('Error al obtener el conteo de registros:', error);
+  //     throw new Error('No se pudo obtener el conteo de registros del evento.');
+  //   }
+  // }
 
   // Obtiene el detalle de un evento con sus actividades y inscripciones
   eventWithDetails(eventId: string): Observable<{
